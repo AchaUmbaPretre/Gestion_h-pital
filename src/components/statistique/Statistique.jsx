@@ -2,7 +2,8 @@ import React from 'react';
 import {
     UserOutlined,
     ArrowRightOutlined,
-    RiseOutlined
+    RiseOutlined,
+    DashOutlined
 } from '@ant-design/icons';
 import { Line } from 'react-chartjs-2';
 import {
@@ -77,7 +78,9 @@ const Statistique = () => {
                   </div>
                   <span className="stat-title">Total</span>
                 </div>
-                <div className="statistique-trait">...</div>
+                <div className="statistique-trait">
+                  <DashOutlined />
+                </div>
               </div>
               <div className="statistique-row-center">
                 <h2 className="stat-h2">1000</h2>
@@ -102,7 +105,9 @@ const Statistique = () => {
                   </div>
                   <span className="stat-title">Total</span>
                 </div>
-                <div className="statistique-trait">...</div>
+                <div className="statistique-trait">
+                  <DashOutlined />
+                </div>
               </div>
               <div className="statistique-row-center">
                 <h2 className="stat-h2">1000</h2>
@@ -127,7 +132,9 @@ const Statistique = () => {
                   </div>
                   <span className="stat-title">Total</span>
                 </div>
-                <div className="statistique-trait">...</div>
+                <div className="statistique-trait">
+                  <DashOutlined />
+                </div>
               </div>
               <div className="statistique-row-center">
                 <h2 className="stat-h2">1000</h2>
@@ -152,7 +159,9 @@ const Statistique = () => {
                   </div>
                   <span className="stat-title">Total</span>
                 </div>
-                <div className="statistique-trait">...</div>
+                <div className="statistique-trait">
+                  <DashOutlined />
+                </div>
               </div>
               <div className="statistique-row-center">
                 <h2 className="stat-h2">1000</h2>

@@ -10,7 +10,9 @@
         .statistique-left{
             .statistique-title{
                 .statistique-h1{
-                    font-size: 1.2rem;
+                    color: rgb(0, 24, 95);
+                    font-weight: 900;
+                    font-size: 1.1rem;
                 }
             }
             .statistique-desc{
@@ -21,12 +23,12 @@
     .statistique-center{
         display: flex;
         justify-content: space-between;
-        gap: 20px;
+        gap: 15px;
         .statistique-center-left{
             flex: 1;
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
+            gap: 10px;
             .statistique-row{
                 display: flex;
                 flex-direction: column;
@@ -37,7 +39,6 @@
                 -webkit-box-shadow: 0px 0px 15px -10px rgba(0,0,0,0.75);
                 box-shadow: 0px 0px 15px -10px rgba(0,0,0,0.75);
                 border-radius: 10px;
-                height: max-content;
                 .statistique-row-top{
                     display: flex;
                     align-items: center;
@@ -57,6 +58,7 @@
 
                         }
                         .stat-title{
+                            color: rgb(0, 24, 95);
                             font-size: .8rem;
                         }
                     }
@@ -67,6 +69,7 @@
                     gap: 10px;
                     .stat-h2{
                         font-size: 1.5rem;
+                        color: rgb(0, 24, 95);
                         font-weight: 900;
                         letter-spacing: 1px;
                     }
@@ -99,9 +102,11 @@
                             align-items: center;
                             gap: 8px;
                             .stat-detail{
+                                color: rgb(0, 24, 95);
                                 font-size: .8rem;
                             }
                             .stat-icon{
+                                color: rgb(0, 24, 95);
                                 font-size: .8rem;
                             }
                         }
@@ -126,6 +131,9 @@
                     display: flex;
                     align-items: center;
                     justify-content: space-between;
+                    .stat_span-title{
+                        color: rgb(0, 24, 95);
+                    }
     
                 }
                 .statistique-wrapper2{
