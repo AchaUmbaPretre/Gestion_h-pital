@@ -3,7 +3,12 @@ import {
     UserOutlined,
     ArrowRightOutlined,
     RiseOutlined,
-    DashOutlined
+    DashOutlined,
+    FileTextOutlined,
+    FunnelPlotOutlined,
+    HomeOutlined,
+    FormOutlined,
+    MedicineBoxOutlined
 } from '@ant-design/icons';
 import { Line } from 'react-chartjs-2';
 import {
@@ -61,12 +66,21 @@ const Statistique = () => {
       <div className="statistique">
         <div className="statistique-top">
           <div className="statistique-left">
+            <HomeOutlined className='icon'/>
             <div className="statistique-title">
-              <h1 className="statistique-h1">Accueil</h1>
+              <h2 className="statistiques-h1">Accueil</h2>
             </div>
-            <span className="statistique-desc">description</span>
           </div>
-          <div className="statistique-right"></div>
+          <div className="statistique-right">
+            <div className="stat-filtre">
+              <FunnelPlotOutlined className='icon-filter' />
+              <span className="stat-span">Filtre</span>
+            </div>
+            <div className="stat-filtre">
+              <FileTextOutlined className='icon-filter'/>
+              <span className="stat-span">Export</span>
+            </div>
+          </div>
         </div>
         <div className="statistique-center">
           <div className="statistique-center-left">
@@ -76,7 +90,7 @@ const Statistique = () => {
                   <div className="stat-icon">
                     <UserOutlined />
                   </div>
-                  <span className="stat-title">Total</span>
+                  <span className="stat-title">Patients</span>
                 </div>
                 <div className="statistique-trait">
                   <DashOutlined />
@@ -103,7 +117,7 @@ const Statistique = () => {
                   <div className="stat-icon">
                     <UserOutlined />
                   </div>
-                  <span className="stat-title">Total</span>
+                  <span className="stat-title">Personnels</span>
                 </div>
                 <div className="statistique-trait">
                   <DashOutlined />
@@ -128,9 +142,9 @@ const Statistique = () => {
               <div className="statistique-row-top">
                 <div className="stat">
                   <div className="stat-icon">
-                    <UserOutlined />
+                    <FormOutlined />
                   </div>
-                  <span className="stat-title">Total</span>
+                  <span className="stat-title">Consultations</span>
                 </div>
                 <div className="statistique-trait">
                   <DashOutlined />
@@ -155,9 +169,9 @@ const Statistique = () => {
               <div className="statistique-row-top">
                 <div className="stat">
                   <div className="stat-icon">
-                    <UserOutlined />
+                    <MedicineBoxOutlined />
                   </div>
-                  <span className="stat-title">Total</span>
+                  <span className="stat-title">Médicaments</span>
                 </div>
                 <div className="statistique-trait">
                   <DashOutlined />
