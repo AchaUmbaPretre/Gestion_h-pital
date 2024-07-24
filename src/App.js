@@ -6,6 +6,8 @@ import Register from './pages/register/Register';
 import RightBar from './pages/rightBar/RightBar';
 import TopBar from './components/topBar/TopBar';
 import SideBar from './components/sideBar/SideBar';
+import DocteurForm from './pages/docteur/docteurForm/DocteurForm';
+import ListeDocteur from './components/listeDocteur/ListeDocteur';
 
 function App() {
   const [currentUser, setCurrentUser] = useState(true);
@@ -30,7 +32,19 @@ function App() {
     {
       path: '/',
       element: <SecureRoute><Layout /></SecureRoute>,
-      children: [{ path: '/', element: <RightBar /> }]
+      children: [
+        { path: '/', 
+          element: <RightBar /> 
+        },
+        {
+          path: '/form_personnel',
+          element: <DocteurForm />
+        },
+        {
+          path: '/liste_docteur',
+          element: <ListeDocteur />
+        },
+      ]
     },
     { path: '/login', element: <Login /> },
     { path: '/register', element: <Register /> }
