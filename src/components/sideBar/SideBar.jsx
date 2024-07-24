@@ -32,7 +32,7 @@ const SideBar = () => {
           <Item key="/" icon={<HomeOutlined />}>
             <Link to="/">Accueil</Link>
           </Item>
-          <SubMenu key="sub1" icon={<UserOutlined />} title="Personnel Médical">
+          <SubMenu key="sub1" icon={<UserOutlined />} title="Personnel">
             <Menu.Item key="1">Nouveau personnel</Menu.Item>
             <Menu.Item key="2">Liste des personnels</Menu.Item>
           </SubMenu>
@@ -70,7 +70,7 @@ const SideBar = () => {
             <Menu.Item key="19">Nouvelle ordonnance</Menu.Item>
             <Menu.Item key="20">Liste des ordonnances</Menu.Item>
           </SubMenu>
-          <SubMenu key="sub10" icon={<FundOutlined />} title="Rapports et statistiques">
+          <SubMenu key="sub10" icon={<FundOutlined />} title="Rapports">
             <Menu.Item key="21">Rapports d'activité</Menu.Item>
             <Menu.Item key="22">Statistiques des patients</Menu.Item>
           </SubMenu>
