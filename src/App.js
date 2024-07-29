@@ -63,6 +63,14 @@ function App() {
           path: '/liste_patient',
           element: <Patient />
         },
+        {
+          path: '/form_service',
+          element: <Patient />
+        },
+        {
+          path: '/liste_service',
+          element: <Patient />
+        },
       ]
     },
     { path: '/login', element: <Login /> },
