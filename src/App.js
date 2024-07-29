@@ -8,6 +8,9 @@ import TopBar from './components/topBar/TopBar';
 import SideBar from './components/sideBar/SideBar';
 import DocteurForm from './pages/docteur/docteurForm/DocteurForm';
 import ListeDocteur from './components/listeDocteur/ListeDocteur';
+import Utilisateur from './pages/utilisateur/Utilisateur';
+import Patient from './pages/patient/Patient';
+import PatientForm from './pages/patient/form/PatientForm';
 
 function App() {
   const [currentUser, setCurrentUser] = useState(true);
@@ -43,6 +46,22 @@ function App() {
         {
           path: '/liste_docteur',
           element: <ListeDocteur />
+        },
+        {
+          path: '/form_user',
+          element: <Utilisateur/>
+        },
+        {
+          path: '/liste_user',
+          element: <Utilisateur />
+        },
+        {
+          path: '/form_patient',
+          element: <PatientForm />
+        },
+        {
+          path: '/liste_patient',
+          element: <Patient />
         },
       ]
     },

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './listeDocteur.scss';
-import { Select, Skeleton, Table, Tag } from 'antd';
+import { Input, Select, Skeleton, Table, Tag } from 'antd';
 
 const { Option } = Select;
 
@@ -93,19 +93,9 @@ const ListeDocteur = () => {
   return (
     <div className="listeDocteur">
       <div className="listeDocteur-top">
-        <h2 className="listeDocteur-h2">Liste des docteurs</h2>
+        <h2 className="listeDocteur-h2">Liste des personnel médical</h2>
         <div className="listeDocteur-title">
-          <Select
-            value={dateFilter}
-            onChange={handleDateFilterChange}
-            style={{ width: 150 }}
-          >
-            <Option value="today">Aujourd'hui</Option>
-            <Option value="yesterday">Hier</Option>
-            <Option value="last7days">7 derniers jours</Option>
-            <Option value="last30days">30 derniers jours</Option>
-            <Option value="last1year">1 an</Option>
-          </Select>
+          <Input.Search />
         </div>
       </div>
       <div className="listeDocteur-content">
