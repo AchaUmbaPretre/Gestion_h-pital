@@ -1,40 +1,31 @@
-.patientForm{
+.docteurForm{
     background: #fff;
     padding: 40px;
     border-radius: 5px;
-    .patient-wrapper{
+    .docteur-h2{
+        font-weight: 900;
+        font-size: 1.2rem;
+        text-transform: uppercase;
+        margin-bottom: 20px;
+        line-height: 40px;
+        border-bottom: 1px solid #eeeeee;
+        color: rgb(0, 0, 56);
+
+    }
+    .docteurForm-wrapper{
         display: grid;
         grid-template-columns: repeat(2, 1fr);
         gap: 20px;
-        .patient-left{
-            border: 1px solid #eeeeee;
-            padding: 20px;
+        .docteur-rows{
             display: flex;
             flex-direction: column;
             gap: 10px;
-            border-radius: 5px;
-            .patient-h2{
-                font-size: .7rem;
-                text-transform: uppercase;
-                margin-bottom: 20px;
-                line-height: 30px;
-                border-bottom: 1px solid #eeeeee;
+            .docteur-label{
+                color: #555;
+                font-size: .8rem;
             }
-            .patient-rows{
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                gap: 20px;
-                .patient-label{
-                    flex: 1;
-                    font-size: .8rem;
-                    span{
-                        color: red;
-                    }
-                }
-                .patient-input{
-                    flex: 1;
-                    padding: 7px 10px;
+            .docteur-input{
+                padding: 10px;
                     border: 1px solid #eeeeee;
                     font-size: .9rem;
                     border-radius: 5px;
@@ -48,14 +39,16 @@
                         font-size: .7rem;
                         color: #a5a5a5;
                     }
-                }
+            }
+            .docteur-inputs{
+                height: 100px;
             }
         }
     }
-    .button-patient{
+    .docteur-btn{
         margin-top: 20px;
         background: rgb(46, 138, 243);
-        padding: 20px;
+        padding: 15px;
         border-radius: 5px;
         border: none;
         color: #fff;

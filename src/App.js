@@ -11,6 +11,7 @@ import ListeDocteur from './components/listeDocteur/ListeDocteur';
 import Utilisateur from './pages/utilisateur/Utilisateur';
 import Patient from './pages/patient/Patient';
 import PatientForm from './pages/patient/form/PatientForm';
+import FormService from './pages/service/formService/FormService';
 
 function App() {
   const [currentUser, setCurrentUser] = useState(true);
@@ -65,7 +66,7 @@ function App() {
         },
         {
           path: '/form_service',
-          element: <Patient />
+          element: <FormService />
         },
         {
           path: '/liste_service',

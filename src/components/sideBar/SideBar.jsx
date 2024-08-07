@@ -70,7 +70,11 @@ const SideBar = () => {
             <Menu.Item key="7">Historique des consultations</Menu.Item>
           </SubMenu>
           <SubMenu key="sub4" icon={<AppstoreOutlined />} title="Service">
-            <Menu.Item key="8">Nouveau service</Menu.Item>
+            <Menu.Item key="8">
+              <Link to='/form_service'>
+                Nouveau service
+              </Link>
+            </Menu.Item>
             <Menu.Item key="9">
               <Link to='/liste_service'>
                 Liste des services
