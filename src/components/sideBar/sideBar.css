@@ -9,5 +9,9 @@
 
 .ant-menu-item,
 .ant-menu-submenu-title {
-  font-size: 16px; /* Increase font size */
+  font-size: 13px; /* Increase font size */
+}
+
+.ant-menu-item, .ant-menu-submenu-title {
+  padding: 10px 16px; /* Ajustez cette valeur selon vos préférences */
 }

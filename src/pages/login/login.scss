@@ -78,56 +78,61 @@
                     }
                 }
             }
-            .login_control{
+            form{
                 display: flex;
-                flex-direction: column;
-                gap: 10px;
-                .login_controle_row{
-                    width: 100%;
+                    flex-direction: column;
+                    gap: 10px;
+                .login_control{
                     display: flex;
-                    justify-content: space-between;
-                    .login_connecte{
-                        font-size: .799rem;
-                        text-decoration: underline;
-                        letter-spacing: 1px;
-                        color: rgba(38, 38, 240, 0.836);
-                        cursor: pointer;
-                    }
-                }
-                .login_label{
-                    font-size: .8rem;
-                    font-weight: 800;
-                    color: rgb(7, 44, 77);
-                }
-                .login_input{
-                    width: 100%;
-                    padding: 10px 8px;
-                    border: none;
-                    outline: none;
-                    border: 1px solid #c5c5c5;
-                    border-radius: 5px;
-                    &::placeholder{
-                        font-size: .9rem;
-                        @include mobileXR{
-                            font-size: .8rem;
+                    flex-direction: column;
+                    gap: 10px;
+                    .login_controle_row{
+                        width: 100%;
+                        display: flex;
+                        justify-content: space-between;
+                        .login_connecte{
+                            font-size: .799rem;
+                            text-decoration: underline;
+                            letter-spacing: 1px;
+                            color: rgba(38, 38, 240, 0.836);
+                            cursor: pointer;
                         }
                     }
-                    @include mobileXR{
+                    .login_label{
                         font-size: .8rem;
-                        padding: 12px 9px;
+                        font-weight: 800;
+                        color: rgb(7, 44, 77);
                     }
-                    @include miniTablette{
-                        padding: 12px 8px;
-                    }
-                }
-                .login_password_wrapper{
-                    border: 1px solid #c5c5c5;
-                    display: flex;
-                    align-items: center;
-                    padding-right: 10px;
                     .login_input{
+                        width: 100%;
+                        padding: 10px 8px;
                         border: none;
+                        outline: none;
+                        border: 1px solid #c5c5c5;
                         border-radius: 5px;
+                        &::placeholder{
+                            font-size: .9rem;
+                            @include mobileXR{
+                                font-size: .8rem;
+                            }
+                        }
+                        @include mobileXR{
+                            font-size: .8rem;
+                            padding: 12px 9px;
+                        }
+                        @include miniTablette{
+                            padding: 12px 8px;
+                        }
+                    }
+                    .login_password_wrapper{
+                        border: 1px solid #c5c5c5;
+                        display: flex;
+                        align-items: center;
+                        padding-right: 10px;
+                        .login_input{
+                            border: none;
+                            border-radius: 5px;
+                        }
                     }
                 }
             }
