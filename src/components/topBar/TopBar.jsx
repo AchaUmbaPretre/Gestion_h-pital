@@ -10,7 +10,7 @@ const TopBar = () => {
     <div className="topbar">
       <div className="topbar-left" onClick={() => navigate('/')}>
         <img src={image} alt="Logo" className="topbar-img" />
-        <span className="logo">C.M Malandi</span>
+        <span className="logo">C.M</span>
       </div>
       <div className="topbar-right">
         <div className="topbar-icons">

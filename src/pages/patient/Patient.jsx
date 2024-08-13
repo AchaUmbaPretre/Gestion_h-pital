@@ -1,39 +1,30 @@
 import React, { useState, useEffect } from 'react';
-import { Input, Select, Skeleton, Table, Tag } from 'antd';
-
+import { Input, Select, Skeleton, Table, Tag, notification } from 'antd';
+import { getPatient } from '../../services/patientService';  // Assurez-vous que cette fonction retourne une promesse avec les données
+import {
+  CalendarOutlined 
+} from '@ant-design/icons';
+import moment from 'moment/moment';
 const { Option } = Select;
 
 const Patient = () => {
-  const [data, setData] = useState([]);
+  const [datas, setDatas] = useState([]);
   const [dateFilter, setDateFilter] = useState('today');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Simulating a fetch request to get the data based on the date filter
-    const fetchData = () => {
-      setLoading(true);
-      setTimeout(() => {
-        // Replace this with actual data fetching logic
-        const fetchedData = [
-          {
-            key: '1',
-            name: 'Dr. Smith',
-            specialty: 'Cardiology',
-            age: 45,
-            tags: ['experienced', 'friendly'],
-          },
-          {
-            key: '2',
-            name: 'Dr. Doe',
-            specialty: 'Neurology',
-            age: 50,
-            tags: ['expert', 'detail-oriented'],
-          },
-          // Add more data as needed
-        ];
-        setData(fetchedData);
+    const fetchData = async () => {
+      try {
+        const response = await getPatient(dateFilter);  // Ajoutez le dateFilter si nécessaire
+        setDatas(response.data);
         setLoading(false);
-      }, 2000);
+      } catch (error) {
+        notification.error({
+          message: 'Erreur de chargement',
+          description: 'Une erreur est survenue lors du chargement des données.',
+        });
+        setLoading(false);
+      }
     };
 
     fetchData();
@@ -47,72 +38,100 @@ const Patient = () => {
     { title: '#', dataIndex: 'id', key: 'id', render: (text, record, index) => index + 1 },
     {
       title: 'Nom',
-      dataIndex: 'name',
-      key: 'name',
-      sorter: (a, b) => a.name.localeCompare(b.name),
+      dataIndex: 'nom_patient',
+      key: 'nom_patient',
+      render: (text) => (
+        <Tag color='blue'>
+          {text}
+        </Tag>
+      )
     },
     {
-      title: 'Spécialité',
-      dataIndex: 'specialty',
-      key: 'specialty',
-      filters: [
-        { text: 'Cardiology', value: 'Cardiology' },
-        { text: 'Neurology', value: 'Neurology' },
-        // Add more filters as needed
-      ],
-      onFilter: (value, record) => record.specialty.includes(value),
+      title: 'Prénom',
+      dataIndex: 'prenom',
+      key: 'prenom',
+      render: (text) => (
+        <Tag color='blue'>
+          {text}
+        </Tag>
+      )
     },
     {
-      title: 'Âge',
-      dataIndex: 'age',
-      key: 'age',
-      sorter: (a, b) => a.age - b.age,
+      title: 'Sexe',
+      dataIndex: 'sexe',
+      key: 'sexe',
+      render: (text) => (
+        <Tag color='blue'>
+          {text || 'Aucun'}
+        </Tag>
+      )
     },
     {
-      title: 'Tags',
-      key: 'tags',
-      dataIndex: 'tags',
-      render: (tags) => (
-        <>
-          {tags.map((tag) => {
-            let color = tag.length > 5 ? 'geekblue' : 'green';
-            if (tag === 'loser') {
-              color = 'volcano';
-            }
-            return (
-              <Tag color={color} key={tag}>
-                {tag.toUpperCase()}
-              </Tag>
-            );
-          })}
-        </>
+      title: 'Adresse',
+      dataIndex: 'adresse',
+      key: 'adresse',
+      render: (text) => (
+        <Tag color='blue'>
+          {text}
+        </Tag>
+      )
+    },
+    {
+      title: 'Telephone',
+      dataIndex: 'telephone',
+      key: 'telephone',
+      render: (text) => (
+        <Tag color='blue'>
+          {text || 'Aucun'}
+        </Tag>
+      )
+    },
+    {
+      title: 'Type de patient',
+      dataIndex: 'typePatient',
+      key: 'typePatient',
+      render: (text) => (
+        <Tag color='blue'>
+          {text}
+        </Tag>
+      )
+    },
+    {
+      title: "Date d'opération",
+      dataIndex: 'date_operation',
+      key: 'date_operation',
+      sorter: (a, b) => moment(a.date_operation) - moment(b.date_operation),
+      sortDirections: ['descend', 'ascend'],
+      render: (text) => (
+        <Tag icon={<CalendarOutlined />} color="blue">
+          {moment(text).format('DD-MM-yyyy')}
+        </Tag>
       ),
     },
   ];
 
   return (
-    <>
-      <div className="listeDocteur">
-        <div className="listeDocteur-top">
-          <h2 className="listeDocteur-h2">Liste des personnel médical</h2>
-          <div className="listeDocteur-title">
-            <Input.Search />
-          </div>
-        </div>
-        <div className="listeDocteur-content">
-          {loading ? (
-            <Skeleton active />
-          ) : (
-            <Table
-              columns={columns}
-              dataSource={data}
-              pagination={{ pageSize: 5 }}
-            />
-          )}
+    <div className="listeDocteur">
+      <div className="listeDocteur-top">
+        <h2 className="listeDocteur-h2">Liste des patients</h2>
+        <div className="listeDocteur-title">
+          <Input.Search placeholder="Rechercher..." />
         </div>
       </div>
-    </>
-  )
+      <div className="listeDocteur-content">
+        {loading ? (
+          <Skeleton active />
+        ) : (
+          <Table
+            columns={columns}
+            dataSource={datas}
+            pagination={{ pageSize: 5 }}
+            rowKey="id"  // Ajoutez une clé unique pour chaque ligne
+          />
+        )}
+      </div>
+    </div>
+  );
 }
 
-export default Patient
+export default Patient;

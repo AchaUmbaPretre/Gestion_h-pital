@@ -25,8 +25,8 @@ const SideBar = () => {
       <Sider>
         <Menu
           mode="inline"
-          defaultSelectedKeys={['1']}
-          defaultOpenKeys={['sub1']}
+           defaultSelectedKeys={['/']}
+/*            defaultOpenKeys={['sub1']}  */
           style={{ height: '100%', borderRight: 0, width: '250px' }}
         >
           <Item key="/" icon={<HomeOutlined />}>

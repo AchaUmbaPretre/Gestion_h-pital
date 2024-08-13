@@ -66,3 +66,74 @@
         }
     }
 }
+
+.radio-group {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .radio-group label {
+    margin-bottom: 5px;
+  }
+  
+  .patient-input {
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .patient-input[type="select"] {
+    width: 100%;
+  }
+  
+
+.modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  padding: 40px;
+  border-radius: 8px;
+  border: 1px solid rgb(124, 124, 124);
+  width: 400px;
+  max-width: 90%;
+  }
+  
+  .overlay {
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .modal-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .modal-buttons {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 20px;
+  }
+  
+  .modal-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  .confirm-button {
+    background-color: #4CAF50;
+    color: white;
+  }
+  
+  .cancel-button {
+    background-color: #f44336;
+    color: white;
+  }
+  

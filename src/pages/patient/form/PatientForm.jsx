@@ -1,97 +1,219 @@
-import React from 'react'
-import './patientForm.scss'
+import React, { useState } from 'react';
+import './patientForm.scss';
+import { Modal, notification } from 'antd'; // Importation des composants Ant Design
+import { postPatient } from '../../../services/patientService';
 
+// Composant PatientForm
 const PatientForm = () => {
+  const [formData, setFormData] = useState({
+    nom_patient: '',
+    prenom: '',
+    dateNaissance: '',
+    lieuNaissance: '',
+    sexe: '',
+    province: '',
+    adresse: '',
+    tel: '',
+    email: '',
+    societePatient: '',
+    assurance: '',
+    groupeSang: '',
+    profession: '',
+    typePatient: '',
+  });
+  
+  const [errors, setErrors] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  // Gestion des changements dans le formulaire
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prevData => ({ ...prevData, [name]: value }));
+  };
+
+  // Validation des données du formulaire
+  const validate = () => {
+    let tempErrors = {};
+    for (const field in formData) {
+      if (!formData[field]) {
+        tempErrors[field] = 'Ce champ est requis';
+      }
+    }
+    setErrors(tempErrors);
+    return Object.keys(tempErrors).length === 0;
+  };
+
+  // Soumission du formulaire
+  const handleSubmit = async () => {
+    if (!validate()) return;
+    setIsLoading(true);
+    try {
+      await postPatient(formData);
+      notification.success({
+        message: 'Succès',
+        description: 'Les informations ont été enregistrées avec succès.',
+      });
+      setIsModalVisible(false); // Fermer le modal après succès
+    } catch (error) {
+      console.error("Erreur lors de se connecter:", error);
+      notification.error({
+        message: 'Erreur',
+        description: 'Une erreur s\'est produite lors de l\'enregistrement des informations.',
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Afficher le modal
+  const showModal = () => setIsModalVisible(true);
+  // Masquer le modal
+  const handleCancel = () => setIsModalVisible(false);
+  // Confirmer la soumission
+  const handleOk = () => {
+    handleSubmit(); // Soumettre le formulaire après confirmation
+  };
   return (
     <>
       <div className="patientForm">
-        <div className="patient-wrapper">
+        <form onSubmit={e => e.preventDefault()} className="patient-wrapper">
           <div className="patient-left">
-            <h2 className="patient-h2">Information Generale</h2>
+            <h2 className="patient-h2">Information Générale</h2>
+            {['nom_patient', 'prenom', 'dateNaissance', 'lieuNaissance'].map((field) => (
+              <div className="patient-rows" key={field}>
+                <label className="patient-label">
+                  {field === 'dateNaissance' ? 'Date de naissance' : field.charAt(0).toUpperCase() + field.slice(1)}
+                  <span>*</span>
+                </label>
+                <input
+                  type={field === 'dateNaissance' ? 'date' : 'text'}
+                  name={field}
+                  className="patient-input"
+                  value={formData[field]}
+                  onChange={handleChange}
+                  placeholder={`Entrez le ${field}....`}
+                />
+                {errors[field] && <p className="error-message">{errors[field]}</p>}
+              </div>
+            ))}
             <div className="patient-rows">
-              <label htmlFor="" className="patient-label">Nom <span>*</span></label>
-              <input type="text" className="patient-input" name='nom' placeholder='Entrez le nom....' />
+              <label className="patient-label">Sexe <span>*</span></label>
+              <div className="radio-group">
+                {['male', 'female', 'other'].map((value) => (
+                  <label key={value}>
+                    <input
+                      type="radio"
+                      name="sexe"
+                      value={value}
+                      checked={formData.sexe === value}
+                      onChange={handleChange}
+                    />
+                    {value.charAt(0).toUpperCase() + value.slice(1)}
+                  </label>
+                ))}
+              </div>
+              {errors.sexe && <p className="error-message">{errors.sexe}</p>}
             </div>
-
-            <div className="patient-rows">
-              <label htmlFor="" className="patient-label">Prenom <span>*</span></label>
-              <input type="text" className="patient-input" name='prenom' placeholder='Entrez le prenom....' />
-            </div>
-
-            <div className="patient-rows">
-              <label htmlFor="" className="patient-label">Sexe <span>*</span></label>
-              <input type="text" className="patient-input" name='sexe' placeholder='Entrez le sexe....' />
-            </div>
-
-            <div className="patient-rows">
-              <label htmlFor="" className="patient-label">Date de naissance <span>*</span></label>
-              <input type="date" className="patient-input" name='dateNaissance' placeholder='Entrez le nom....' />
-            </div>
-
-            <div className="patient-rows">
-              <label htmlFor="" className="patient-label">Lieu de naissance <span>*</span></label>
-              <input type="text" name='lieuNaissance' className="patient-input" />
-            </div>
-
           </div>
           <div className="patient-left">
             <h2 className="patient-h2">Adresse</h2>
-            <div className="patient-rows">
-              <label htmlFor="" className="patient-label">Province <span>*</span></label>
-              <input type="text" name='province' className="patient-input" />
-            </div>
-
-            <div className="patient-rows">
-              <label htmlFor="" className="patient-label">Adresse <span>*</span></label>
-              <input type="text" className="patient-input" name='adresse' placeholder="Entrez l'adresse...." />
-            </div>
-
-            <div className="patient-rows">
-              <label htmlFor="" className="patient-label">Tel mobile <span>*</span></label>
-              <input type="tel" className="patient-input" name='tel' placeholder='+243' />
-            </div>
-
-            <div className="patient-rows">
-              <label htmlFor="email" className="patient-label">Email <span>*</span></label>
-              <input type="text" className="patient-input" name='email' placeholder='Entrez le mail....' />
-            </div>
+            {['province', 'adresse', 'tel', 'email'].map((field) => (
+              <div className="patient-rows" key={field}>
+                <label className="patient-label">
+                  {field === 'tel' ? 'Tel mobile' : field.charAt(0).toUpperCase() + field.slice(1)}
+                  <span>*</span>
+                </label>
+                <input
+                  type={field === 'tel' ? 'tel' : field === 'email' ? 'email' : 'text'}
+                  name={field}
+                  className="patient-input"
+                  value={formData[field]}
+                  onChange={handleChange}
+                  placeholder={`Entrez le ${field}....`}
+                />
+                {errors[field] && <p className="error-message">{errors[field]}</p>}
+              </div>
+            ))}
           </div>
-
           <div className="patient-left">
             <h2 className="patient-h2">Assurance</h2>
-            <div className="patient-rows">
-              <label htmlFor="" className="patient-label">Société du patient <span>*</span></label>
-              <input type="text" name='societePatient' className="patient-input" placeholder='Entrez le nom....' />
-            </div>
-
-            <div className="patient-rows">
-              <label htmlFor="" className="patient-label">Assurance <span>*</span></label>
-              <input type="text" name='assurance' className="patient-input" placeholder='Entrez le nom....' />
-            </div>
+            {['societePatient', 'assurance'].map((field) => (
+              <div className="patient-rows" key={field}>
+                <label className="patient-label">
+                  {field === 'societePatient' ? 'Société du patient' : 'Assurance'}
+                  <span>*</span>
+                </label>
+                <input
+                  type="text"
+                  name={field}
+                  className="patient-input"
+                  value={formData[field]}
+                  onChange={handleChange}
+                  placeholder={`Entrez le ${field}....`}
+                />
+                {errors[field] && <p className="error-message">{errors[field]}</p>}
+              </div>
+            ))}
           </div>
-
           <div className="patient-left">
             <h2 className="patient-h2">Autres</h2>
             <div className="patient-rows">
-              <label htmlFor="" className="patient-label">Profession <span>*</span></label>
-              <input type="text" name='profession' className="patient-input" placeholder='Entrez le nom....' />
+              <label className="patient-label">Groupe Sanguin <span>*</span></label>
+              <select
+                name="groupeSang"
+                className="patient-input"
+                value={formData.groupeSang}
+                onChange={handleChange}
+              >
+                <option value="">Sélectionnez le groupe sanguin</option>
+                {['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'].map((group) => (
+                  <option key={group} value={group}>{group}</option>
+                ))}
+              </select>
+              {errors.groupeSang && <p className="error-message">{errors.groupeSang}</p>}
             </div>
-
-            <div className="patient-rows">
-              <label htmlFor="" className="patient-label">Type patient <span>*</span></label>
-              <input type="text" name='typePatient' className="patient-input" placeholder='Entrez le nom....' />
-            </div>
-
-            <div className="patient-rows">
-              <label htmlFor="" className="patient-label">Groupe sanguin <span>*</span></label>
-              <input type="text" name='groupeSang' className="patient-input" placeholder='Entrez le nom....' />
-            </div>
+            {['profession', 'typePatient'].map((field) => (
+              <div className="patient-rows" key={field}>
+                <label className="patient-label">
+                  {field.charAt(0).toUpperCase() + field.slice(1)}
+                  <span>*</span>
+                </label>
+                <input
+                  type="text"
+                  name={field}
+                  className="patient-input"
+                  value={formData[field]}
+                  onChange={handleChange}
+                  placeholder={`Entrez le ${field}....`}
+                />
+                {errors[field] && <p className="error-message">{errors[field]}</p>}
+              </div>
+            ))}
           </div>
-        </div>
-        <button className="button-patient">Enregistrer</button>
+        </form>
+        <button
+          type="button"
+          className="button-patient"
+          onClick={showModal}
+          disabled={isLoading}
+        >
+          {isLoading ? 'Enregistrement...' : 'Enregistrer'}
+        </button>
+
+        {/* Modal de confirmation */}
+        <Modal
+        title="Confirmation"
+        visible={isModalVisible}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        confirmLoading={isLoading}
+      >
+        <p>Êtes-vous sûr de vouloir enregistrer ces informations ?</p>
+      </Modal>
       </div>
     </>
-  )
+  );
 }
 
-export default PatientForm
+export default PatientForm;
