@@ -7,11 +7,12 @@ import RightBar from './pages/rightBar/RightBar';
 import TopBar from './components/topBar/TopBar';
 import SideBar from './components/sideBar/SideBar';
 import DocteurForm from './pages/docteur/docteurForm/DocteurForm';
-import ListeDocteur from './components/listeDocteur/ListeDocteur';
 import Utilisateur from './pages/utilisateur/Utilisateur';
 import Patient from './pages/patient/Patient';
 import PatientForm from './pages/patient/form/PatientForm';
 import FormService from './pages/service/formService/FormService';
+import ListeDocteur from './pages/docteur/ListeDocteur/ListeDocteur';
+import Consultation from './pages/consultation/Consultation';
 
 function App() {
   const [currentUser, setCurrentUser] = useState(true);
@@ -46,7 +47,7 @@ function App() {
         },
         {
           path: '/liste_docteur',
-          element: <ListeDocteur />
+          element: <ListeDocteur/>
         },
         {
           path: '/form_user',
@@ -71,6 +72,10 @@ function App() {
         {
           path: '/liste_service',
           element: <Patient />
+        },
+        {
+          path: '/liste_consultation',
+          element: <Consultation />
         },
       ]
     },

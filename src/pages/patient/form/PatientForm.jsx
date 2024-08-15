@@ -21,6 +21,7 @@ const PatientForm = () => {
     profession: '',
     typePatient: '',
   });
+
   
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
