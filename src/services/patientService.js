@@ -4,8 +4,12 @@ import config from '../config';
 
 const DOMAIN = config.REACT_APP_SERVER_DOMAIN;
 
-export const getPatient = async (user) => {
+export const getPatient = async () => {
     return axios.get(`${DOMAIN}/api/patient`);
+  };
+
+export const getPatientOne = async (id) => {
+    return axios.get(`${DOMAIN}/api/patient/One?id_patient=${id}`);
   };
 
 export const postPatient = async (data) => {
