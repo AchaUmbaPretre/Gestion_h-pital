@@ -1,57 +1,59 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react';
 import Select from 'react-select';
-import './consultation.scss'
+import './consultation.scss';
 import { getPatient } from '../../services/patientService';
-import { Checkbox, Input, notification, Skeleton, Table, Tag } from 'antd';
-import { getConsultationType } from '../../services/consultservice';
+import { Button, Checkbox, Input, notification, Skeleton, Table, Tag } from 'antd';
+import { getConsultationType, postConsultation } from '../../services/consultservice';
+import { getDocteur } from '../../services/docteurService';
 
 const Consultation = () => {
-  const [data, setData] = useState([]);
-  const [patient, setPatient] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [consult, setConsult] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [data, setData] = useState({});
+  const [patients, setPatients] = useState([]);
+  const [consultations, setConsultations] = useState([]);
+  const [doctors, setDoctors] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [selectedConsultations, setSelectedConsultations] = useState([]);
 
   useEffect(() => {
-    const fetchPatient = async () => {
+    const fetchData = async () => {
       try {
-        const response = await getPatient();  // Ajoutez le dateFilter si nécessaire
-        setPatient(response.data);
+        const [patientResponse, consultResponse, doctorResponse] = await Promise.all([
+          getPatient(),
+          getConsultationType(),
+          getDocteur(),
+        ]);
+
+        setPatients(patientResponse.data);
+        setConsultations(consultResponse.data);
+        setDoctors(doctorResponse?.data?.data || []);
       } catch (error) {
         notification.error({
           message: 'Erreur de chargement',
           description: 'Une erreur est survenue lors du chargement des données.',
         });
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchPatient();
+    fetchData();
   }, []);
 
-  useEffect(() => {
-    const fetchType = async () => {
-      try {
-        const response = await getConsultationType();  // Ajoutez le dateFilter si nécessaire
-        setConsult(response.data);
-      } catch (error) {
-        notification.error({
-          message: 'Erreur de chargement',
-          description: 'Une erreur est survenue lors du chargement des données.',
-        });
-      }
-    };
-
-    fetchType();
+  const handleInputChange = useCallback((e) => {
+    const { name, value } = e.target;
+    const updatedValue = name === 'email'
+      ? value.toLowerCase()
+      : isNaN(Number(value))
+        ? value.charAt(0).toUpperCase() + value.slice(1)
+        : value;
+    setData((prev) => ({ ...prev, [name]: updatedValue }));
   }, []);
 
   const handleCheckboxChange = (id_typeConsultation, checked) => {
-    setSelectedConsultations(prev => {
-      if (checked) {
-        return [...prev, id_typeConsultation];
-      } else {
-        return prev.filter(id => id !== id_typeConsultation);
-      }
-    });
+    setSelectedConsultations(prev => 
+      checked ? [...prev, id_typeConsultation] : prev.filter(id => id !== id_typeConsultation)
+    );
   };
 
   const columns = [
@@ -60,106 +62,134 @@ const Consultation = () => {
       title: 'Nom',
       dataIndex: 'nomConsultation',
       key: 'nomConsultation',
-      render: (text) => (
-        <Tag color='blue'>
-          {text}
-        </Tag>
-      )
+      render: text => <Tag color='blue'>{text}</Tag>,
     },
     {
-      title: "prix",
+      title: 'Prix',
       dataIndex: 'prixConsultation',
       key: 'prixConsultation',
-      render: (text) => (
-        <Tag color='blue'>
-          {text} $
-        </Tag>
-      )
+      render: text => <Tag color='blue'>{text} $</Tag>,
     },
     {
-      title: 'Action',
+      title: 'Crochet',
       key: 'action',
       render: (text, record) => (
         <Checkbox
-          onChange={(e) => handleCheckboxChange(record.id_typeConsultation, e.target.checked)}
-        >
-        </Checkbox>
-      )
+          onChange={e => handleCheckboxChange(record.id_typeConsultation, e.target.checked)}
+        />
+      ),
     },
   ];
 
+  const handleSubmit = async () => {
+    setIsLoading(true);
+    try {
+      for (const selected of selectedConsultations) {
+        await postConsultation({
+          ...data,
+          id_typeConsultation: selected,
+        });
+      }
+      notification.success({
+        message: 'Succès',
+        description: 'Les informations ont été enregistrées avec succès.',
+      });
+    } catch (error) {
+      console.error("Erreur lors de l'enregistrement:", error);
+      notification.error({
+        message: 'Erreur',
+        description: 'Une erreur s\'est produite lors de l\'enregistrement des informations.',
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
-    <>
-      <div className="consultation">
-        <div className="consultation-wrapper">
-          <div className="consultation-top">
-            <div className="consultation-top-left">
-              <label htmlFor="">Sélectionnez un patient <span>*</span></label>
-              <Select
-                name="id_patient"
-                options={patient?.map((item) => ({
+    <div className="consultation">
+      <div className="consultation-wrapper">
+        <div className="consultation-top">
+          <div className="consultation-top-left">
+            <label>Sélectionnez un patient <span>*</span></label>
+            <Select
+              name="id_patient"
+              options={patients.map(item => ({
                 value: item.id_patient,
                 label: item.nom_patient,
-                }))}
-                placeholder="Sélectionnez un patient..."
-              />
-            </div>
-            <div className="consultation-top-right">
-              <h2 className="consult-h2">Information du client</h2>
-              <div className="consult-wrapper">
-                <div className="consult-controle">
-                  <span className="consult-span">Nom <span style={{color: 'red'}}>*</span> : </span>
-                  <span className="consult-span-sous">Acha</span>
-                </div>
-                <div className="consult-controle">
-                  <span className="consult-span">Prenom <span style={{color: 'red'}}>*</span> : </span>
-                  <span className="consult-span-sous">Acha</span>
-                </div>
-                <div className="consult-controle">
-                  <span className="consult-span">Date de naissance <span style={{color: 'red'}}>*</span> : </span>
-                  <span className="consult-span-sous">Acha</span>
-                </div>
-                <div className="consult-controle">
-                  <span className="consult-span">Adresse <span style={{color: 'red'}}>*</span> : </span>
-                  <span className="consult-span-sous">Av. Muzibila Q/Debonhomme N°40</span>
-                </div>
-                <div className="consult-controle">
-                <span className="consult-span">Tel <span style={{color: 'red'}}>*</span> : </span>
-                <span className="consult-span-sous">+243824562776</span>
-                </div>
+              }))}
+              placeholder="Sélectionnez un patient..."
+              onChange={(selectedOption) => setData((prev) => ({ ...prev, patientId: selectedOption.value }))}
+            />
+          </div>
+          <div className="consultation-top-right">
+            <h2 className="consult-h2">Informations du client</h2>
+            <div className="consult-wrapper">
+              <div className="consult-controle">
+                <span className="consult-span">Nom <span style={{ color: 'red' }}>*</span> :</span>
+                <span className="consult-span-sous">Acha</span>
               </div>
-
+              <div className="consult-controle">
+                <span className="consult-span">Prénom <span style={{ color: 'red' }}>*</span> :</span>
+                <span className="consult-span-sous">Acha</span>
+              </div>
             </div>
           </div>
-          <div className="consultation-center">
-            <div className="consultation-left">
-                <div className="consult-title-row">
-                  <h2 className="consult-title-h2">Consultation</h2>
-                </div>
-                <div className="consult-row-search">
-                  <Input.Search placeholder='Recherche....'/>
-                </div>
-                <div className="consult-row-tableau">
-                {loading ? (
-                  <Skeleton active />
-                ) : (
-                  <Table
-                    columns={columns}
-                    dataSource={consult}
-                    pagination={{ pageSize: 5 }}
-                    rowKey="id_consultation"  // Ajoutez une clé unique pour chaque ligne
-                  />
-                )}
-                </div>
+        </div>
+        <div className="consultation-center">
+          <div className="consultation-left">
+            <div className="consult-title-row">
+              <h2 className="consult-title-h2">Consultation</h2>
             </div>
-            <div className="consultation-right">
-              AAAAA
+            <div className="consult-row-search">
+              <Input.Search placeholder='Recherche....' />
+            </div>
+            <div className="consult-row-tableau">
+              {loading ? (
+                <Skeleton active />
+              ) : (
+                <Table
+                  columns={columns}
+                  dataSource={consultations}
+                  pagination={{ pageSize: 5 }}
+                  rowKey="id_consultation"
+                />
+              )}
+            </div>
+          </div>
+          <div className="consultation-right">
+            <h2 className="consult_h2">Informations supplémentaires</h2>
+            <div className="consult-right-wrapper">
+              <div className="consult-control">
+                <label>Médecin ou docteur <span style={{ color: 'red' }}>*</span></label>
+                <Select
+                  name="personnelId"
+                  options={doctors.map(doctor => ({
+                    value: doctor.id,
+                    label: doctor.username,
+                  }))}
+                  placeholder="Sélectionnez un docteur..."
+                  onChange={(selectedOption) => setData((prev) => ({ ...prev, personnelId: selectedOption.value }))}
+                />
+              </div>
+
+              <div className="consult-control">
+                <label>Diagnostic <span style={{ color: 'red' }}>*</span></label>
+                <Input.TextArea name='diagnostic' placeholder='Entrez le diagnostic...' onChange={handleInputChange} />
+              </div>
+
+              <div className="consult-control">
+                <label>Note <span style={{ color: 'red' }}>*</span></label>
+                <Input.TextArea name='notes' placeholder='Entrez la note....' onChange={handleInputChange} />
+              </div>
+              <div className="consult-row-btn">
+                <Button type="primary" loading={isLoading} onClick={handleSubmit}>Envoyer</Button>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </>
-  )
-}
+    </div>
+  );
+};
 
-export default Consultation
+export default Consultation;

@@ -44,18 +44,6 @@ const SideBar = () => {
               </Link>
             </Menu.Item>
           </SubMenu>
-          <SubMenu key="sub2" icon={<SolutionOutlined />} title="Utilisateur">
-            <Menu.Item key="3">
-              <Link to='/form_user'>
-                Nouveau compte
-              </Link>
-            </Menu.Item>
-            <Menu.Item key="4">
-              <Link to='/liste_user'>
-                Liste des utilisateurs
-              </Link>
-            </Menu.Item>
-          </SubMenu>
           <SubMenu key="sub3" icon={<MedicineBoxOutlined />} title="Patient">
             <Menu.Item key="5">
               <Link to='/form_patient'>
@@ -70,16 +58,23 @@ const SideBar = () => {
             <Menu.Item key="7">Historique des consultations</Menu.Item>
           </SubMenu>
           <SubMenu key="sub4" icon={<AppstoreOutlined />} title="Service">
-            <Menu.Item key="8">
-              <Link to='/form_service'>
-                Nouveau service
-              </Link>
-            </Menu.Item>
             <Menu.Item key="9">
               <Link to='/liste_service'>
                 Liste des services
               </Link>
               </Menu.Item>
+          </SubMenu>
+          <SubMenu key="sub6" icon={<FormOutlined />} title="Consultation">
+            <Menu.Item key="13">
+              <Link to='/consultation'>
+                Nouvelle consultation
+              </Link>
+            </Menu.Item>
+            <Menu.Item key="12">
+              <Link to='/liste_consultation'>
+                Liste des consultations
+              </Link>
+            </Menu.Item>
           </SubMenu>
           <SubMenu key="sub5" icon={<AuditOutlined />} title="Admission">
             <Menu.Item key="10">
@@ -88,14 +83,6 @@ const SideBar = () => {
             <Menu.Item key="11">
               <Link to='/liste_admissions'>
                 Liste des admissions
-              </Link>
-            </Menu.Item>
-          </SubMenu>
-          <SubMenu key="sub6" icon={<FormOutlined />} title="Consultation">
-            <Menu.Item key="12">Nouvelle consultation</Menu.Item>
-            <Menu.Item key="13">
-              <Link to='/liste_consultation'>
-                Liste des consultations
               </Link>
             </Menu.Item>
           </SubMenu>
@@ -121,6 +108,18 @@ const SideBar = () => {
             <Menu.Item key="20">
               <Link to='/liste_ordonnance'>
                 Liste des ordonnances
+              </Link>
+            </Menu.Item>
+          </SubMenu>
+          <SubMenu key="sub2" icon={<SolutionOutlined />} title="Utilisateur">
+            <Menu.Item key="3">
+              <Link to='/form_user'>
+                Nouveau compte
+              </Link>
+            </Menu.Item>
+            <Menu.Item key="4">
+              <Link to='/liste_user'>
+                Liste des utilisateurs
               </Link>
             </Menu.Item>
           </SubMenu>

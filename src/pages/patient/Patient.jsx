@@ -1,21 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { Input, Select, Skeleton, Table, Tag, notification } from 'antd';
-import { getPatient } from '../../services/patientService';  // Assurez-vous que cette fonction retourne une promesse avec les données
-import {
-  CalendarOutlined 
-} from '@ant-design/icons';
-import moment from 'moment/moment';
+import { Input, Select, Skeleton, Table, Tag, notification, Button, Space, Card, Badge, DatePicker, Dropdown, Menu, Row, Col, Divider } from 'antd';
+import { getPatient } from '../../services/patientService';
+import { CalendarOutlined, FileExcelOutlined, FilePdfOutlined, MoreOutlined, FilterOutlined } from '@ant-design/icons';
+import moment from 'moment';
+import { saveAs } from 'file-saver';
+import * as XLSX from 'xlsx';
+
+const { RangePicker } = DatePicker;
 const { Option } = Select;
 
 const Patient = () => {
   const [datas, setDatas] = useState([]);
-  const [dateFilter, setDateFilter] = useState('today');
+  const [dateRange, setDateRange] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedType, setSelectedType] = useState('all');
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await getPatient(dateFilter);  // Ajoutez le dateFilter si nécessaire
+        const response = await getPatient();
         setDatas(response.data);
         setLoading(false);
       } catch (error) {
@@ -28,11 +32,63 @@ const Patient = () => {
     };
 
     fetchData();
-  }, [dateFilter]);
+  }, []);
 
-  const handleDateFilterChange = (value) => {
-    setDateFilter(value);
+  const handleSearch = (value) => {
+    setSearchTerm(value.toLowerCase());
   };
+
+  const handleDateChange = (dates) => {
+    setDateRange(dates);
+  };
+
+  const handleTypeChange = (value) => {
+    setSelectedType(value);
+  };
+
+  const exportToExcel = () => {
+    const ws = XLSX.utils.json_to_sheet(datas);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Patients');
+    XLSX.writeFile(wb, 'patients_data.xlsx');
+  };
+
+  const exportToPDF = () => {
+    // Your implementation for exporting to PDF
+    notification.info({
+      message: 'Fonctionnalité PDF',
+      description: 'Exportation PDF en cours de développement.',
+    });
+  };
+
+  const filteredData = datas
+    .filter(item =>
+      item.nom_patient.toLowerCase().includes(searchTerm) ||
+      item.prenom.toLowerCase().includes(searchTerm) ||
+      item.telephone.toLowerCase().includes(searchTerm) ||
+      item.adresse.toLowerCase().includes(searchTerm)
+    )
+    .filter(item => 
+      selectedType === 'all' || item.typePatient === selectedType
+    )
+    .filter(item => {
+      if (dateRange.length === 2) {
+        const operationDate = moment(item.date_operation);
+        return operationDate.isBetween(dateRange[0], dateRange[1], 'days', '[]');
+      }
+      return true;
+    });
+
+  const menu = (
+    <Menu>
+      <Menu.Item key="1" icon={<FileExcelOutlined />} onClick={exportToExcel}>
+        Exporter en Excel
+      </Menu.Item>
+      <Menu.Item key="2" icon={<FilePdfOutlined />} onClick={exportToPDF}>
+        Exporter en PDF
+      </Menu.Item>
+    </Menu>
+  );
 
   const columns = [
     { title: '#', dataIndex: 'id', key: 'id', render: (text, record, index) => index + 1 },
@@ -40,61 +96,39 @@ const Patient = () => {
       title: 'Nom',
       dataIndex: 'nom_patient',
       key: 'nom_patient',
-      render: (text) => (
-        <Tag color='blue'>
-          {text}
-        </Tag>
-      )
+      render: (text) => <Tag color='blue'>{text}</Tag>,
     },
     {
       title: 'Prénom',
       dataIndex: 'prenom',
       key: 'prenom',
-      render: (text) => (
-        <Tag color='blue'>
-          {text}
-        </Tag>
-      )
+      render: (text) => <Tag color='blue'>{text}</Tag>,
     },
     {
       title: 'Sexe',
       dataIndex: 'sexe',
       key: 'sexe',
-      render: (text) => (
-        <Tag color='blue'>
-          {text || 'Aucun'}
-        </Tag>
-      )
+      render: (text) => <Tag color='blue'>{text || 'Aucun'}</Tag>,
     },
     {
       title: 'Adresse',
       dataIndex: 'adresse',
       key: 'adresse',
-      render: (text) => (
-        <Tag color='blue'>
-          {text}
-        </Tag>
-      )
+      render: (text) => <Tag color='blue'>{text}</Tag>,
     },
     {
-      title: 'Telephone',
-      dataIndex: 'telephone',
-      key: 'telephone',
-      render: (text) => (
-        <Tag color='blue'>
-          {text || 'Aucun'}
-        </Tag>
-      )
+      title: 'Téléphone',
+      dataIndex: 'tel',
+      key: 'tel',
+      render: (text) => <Tag color='blue'>{text || 'Aucun'}</Tag>,
     },
     {
       title: 'Type de patient',
       dataIndex: 'typePatient',
       key: 'typePatient',
       render: (text) => (
-        <Tag color='blue'>
-          {text}
-        </Tag>
-      )
+        <Badge color={text === 'Urgent' ? 'red' : 'green'} text={text} />
+      ),
     },
     {
       title: "Date d'opération",
@@ -108,30 +142,54 @@ const Patient = () => {
         </Tag>
       ),
     },
+    {
+      title: 'Actions',
+      key: 'actions',
+      render: () => (
+        <Dropdown overlay={menu} trigger={['click']}>
+          <Button icon={<MoreOutlined />} />
+        </Dropdown>
+      ),
+    },
   ];
 
   return (
-    <div className="listeDocteur">
-      <div className="listeDocteur-top">
-        <h2 className="listeDocteur-h2">Liste des patients</h2>
-        <div className="listeDocteur-title">
-          <Input.Search placeholder="Rechercher..." />
-        </div>
-      </div>
-      <div className="listeDocteur-content">
-        {loading ? (
-          <Skeleton active />
-        ) : (
-          <Table
-            columns={columns}
-            dataSource={datas}
-            pagination={{ pageSize: 5 }}
-            rowKey="id"  // Ajoutez une clé unique pour chaque ligne
+    <Card
+      style={{padding:"20px 0px"}}
+      title="Liste des patients"
+      extra={
+        <Space size="middle">
+          <RangePicker onChange={handleDateChange} />
+          <Select defaultValue="all" onChange={handleTypeChange} style={{ width: 150 }}>
+            <Option value="all">Tous les types</Option>
+            <Option value="Urgent">Urgent</Option>
+            <Option value="Normal">Normal</Option>
+          </Select>
+          <Input.Search
+            placeholder="Rechercher..."
+            onSearch={handleSearch}
+            style={{ width: 300 }}
           />
-        )}
-      </div>
-    </div>
+          <Dropdown overlay={menu} trigger={['click']}>
+            <Button icon={<FilterOutlined />}>Exporter</Button>
+          </Dropdown>
+        </Space>
+      }
+      bordered={false}
+      className="listePatient-card"
+    >
+      {loading ? (
+        <Skeleton active />
+      ) : (
+        <Table
+          columns={columns}
+          dataSource={filteredData}
+          pagination={{ pageSize: 10 }}
+          rowKey="id"
+        />
+      )}
+    </Card>
   );
-}
+};
 
 export default Patient;

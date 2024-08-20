@@ -2,10 +2,76 @@
     background: #fff;
     padding: 40px;
     border-radius: 5px;
-    .patient-wrapper{
+    .patient-tabs{
+      .patient-left{
         display: grid;
         grid-template-columns: repeat(2, 1fr);
         gap: 20px;
+        .patient-h2{
+          font-size: .7rem;
+          text-transform: uppercase;
+          margin-bottom: 20px;
+          line-height: 30px;
+          border-bottom: 1px solid #eeeeee;
+        }
+        .patient-rows{
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+          .patient-label{
+            flex: 1;
+            font-size: .8rem;
+            span{
+              color: red;
+            }
+          }
+          .radio-group{
+            display: flex;
+            gap: 8px;
+          }
+          .patient-input{
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #eeeeee;
+            font-size: .9rem;
+            border-radius: 5px;
+            outline: none;
+            transition: .3s;
+            &:focus{
+              border: 1px solid rgba(36, 36, 250, 0.418);
+            }
+  
+            &::placeholder{
+                font-size: .9rem;
+                color: #a5a5a5;
+            }
+          }
+        }
+      }
+    }
+    .patient-wrapper{
+        .patient-rows{
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 20px;
+        }
+        .patient-input{
+          flex: 1;
+          padding: 10px;
+          border: 1px solid #eeeeee;
+          font-size: .9rem;
+          border-radius: 5px;
+          outline: none;
+          transition: .3s;
+          &:focus{
+            border: 1px solid rgba(36, 36, 250, 0.418);
+          }
+
+          &::placeholder{
+              font-size: .7rem;
+              color: #a5a5a5;
+          }
+        }
         .patient-left{
             border: 1px solid #eeeeee;
             padding: 20px;
@@ -55,7 +121,7 @@
     .button-patient{
         margin-top: 20px;
         background: rgb(46, 138, 243);
-        padding: 20px;
+        padding: 10px 15px;
         border-radius: 5px;
         border: none;
         color: #fff;
@@ -120,7 +186,7 @@
   }
   
   .modal-button {
-    padding: 10px 20px;
+    padding: 10px 15px;
     border: none;
     border-radius: 5px;
     font-size: 16px;
