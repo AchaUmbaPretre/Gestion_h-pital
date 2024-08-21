@@ -11,7 +11,7 @@ const RightBar = () => {
           <Statistique />
           <div className="rightbar-wrapper">
             <ListeDocteur/>
-            <ChartRond />
+{/*             <ChartRond /> */}
           </div>
         </div>
       

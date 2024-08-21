@@ -14,6 +14,8 @@ import FormService from './pages/service/formService/FormService';
 import ListeDocteur from './pages/docteur/ListeDocteur/ListeDocteur';
 import Consultation from './pages/consultation/Consultation';
 import Service from './pages/service/Service';
+import ListeConsultation from './pages/consultation/listeConsultation/ListeConsultation';
+import Rdv from './pages/rdv/Rdv';
 
 function App() {
   const [currentUser, setCurrentUser] = useState(true);
@@ -80,7 +82,11 @@ function App() {
         },
         {
           path: '/liste_consultation',
-          element: <Consultation />
+          element: <ListeConsultation />
+        },
+        {
+          path: '/liste_rdv',
+          element: <Rdv />
         },
       ]
     },

@@ -25,8 +25,7 @@ const SideBar = () => {
       <Sider>
         <Menu
           mode="inline"
-           defaultSelectedKeys={['/']}
-/*            defaultOpenKeys={['sub1']}  */
+          defaultSelectedKeys={['/']}
           style={{ height: '100%', borderRight: 0, width: '250px' }}
         >
           <Item key="/" icon={<HomeOutlined />}>
@@ -39,7 +38,7 @@ const SideBar = () => {
               </Link>
             </Menu.Item>
             <Menu.Item key="2">
-              <Link to="/liste_docteur" >
+              <Link to="/liste_docteur">
                 Liste des personnels
               </Link>
             </Menu.Item>
@@ -62,7 +61,7 @@ const SideBar = () => {
               <Link to='/liste_service'>
                 Liste des services
               </Link>
-              </Menu.Item>
+            </Menu.Item>
           </SubMenu>
           <SubMenu key="sub6" icon={<FormOutlined />} title="Consultation">
             <Menu.Item key="13">
@@ -126,6 +125,18 @@ const SideBar = () => {
           <SubMenu key="sub10" icon={<FundOutlined />} title="Rapports">
             <Menu.Item key="21">Rapports d'activité</Menu.Item>
             <Menu.Item key="22">Statistiques des patients</Menu.Item>
+          </SubMenu>
+          <SubMenu key="sub11" icon={<CalendarOutlined />} title="Rendez-vous">
+            <Menu.Item key="24">
+              <Link to='/nouveau_rendezvous'>
+                Nouveau rendez-vous
+              </Link>
+            </Menu.Item>
+            <Menu.Item key="25">
+              <Link to='/liste_rdv'>
+                Liste des rendez-vous
+              </Link>
+            </Menu.Item>
           </SubMenu>
           <Item key="23" icon={<SettingOutlined />}>
             Paramètres
