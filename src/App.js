@@ -16,6 +16,8 @@ import Consultation from './pages/consultation/Consultation';
 import Service from './pages/service/Service';
 import ListeConsultation from './pages/consultation/listeConsultation/ListeConsultation';
 import Rdv from './pages/rdv/Rdv';
+import Admission from './pages/admission/Admission';
+import Traitement from './pages/traitement/Traitement';
 
 function App() {
   const [currentUser, setCurrentUser] = useState(true);
@@ -83,6 +85,14 @@ function App() {
         {
           path: '/liste_consultation',
           element: <ListeConsultation />
+        },
+        {
+          path: '/admission',
+          element: <Admission />
+        },
+        {
+          path: '/traitement',
+          element: <Traitement />
         },
         {
           path: '/liste_rdv',

@@ -76,11 +76,11 @@ const SideBar = () => {
             </Menu.Item>
           </SubMenu>
           <SubMenu key="sub5" icon={<AuditOutlined />} title="Admission">
-            <Menu.Item key="10">
+{/*             <Menu.Item key="10">
               Nouvelle admission
-            </Menu.Item>
+            </Menu.Item> */}
             <Menu.Item key="11">
-              <Link to='/liste_admissions'>
+              <Link to='/admission'>
                 Liste des admissions
               </Link>
             </Menu.Item>
@@ -88,7 +88,7 @@ const SideBar = () => {
           <SubMenu key="sub7" icon={<MedicineBoxOutlined />} title="Traitement">
             <Menu.Item key="14">Nouveau traitement</Menu.Item>
             <Menu.Item key="15">
-              <Link to='/liste_traitement'>
+              <Link to='/traitement'>
                 Liste des traitements
               </Link>
             </Menu.Item>

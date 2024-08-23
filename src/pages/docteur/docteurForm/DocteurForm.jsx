@@ -1,7 +1,7 @@
-import React, { useState } from 'react'; 
-import { Modal, notification } from 'antd';
+import React, { useEffect, useState } from 'react'; 
+import { Modal, notification, Select } from 'antd';
 import './docteurForm.scss';
-import { postDocteur } from '../../../services/docteurService';
+import { getDocteurSpecialite, postDocteur } from '../../../services/docteurService';
 import { useNavigate } from 'react-router-dom';
 
 const DocteurForm = () => {
@@ -15,7 +15,7 @@ const DocteurForm = () => {
     adresse: '',
     img: null,
   });
-
+  const [speciale, setSpeciale] = useState([]);
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -30,6 +30,24 @@ const DocteurForm = () => {
     }
   };
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [specialiteResponse] = await Promise.all([
+          getDocteurSpecialite()
+        ]);
+
+        setSpeciale(specialiteResponse.data.data);
+      } catch (error) {
+        notification.error({
+          message: 'Erreur de chargement',
+          description: 'Une erreur est survenue lors du chargement des données.',
+        });
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const validate = () => {
     let tempErrors = {};
@@ -55,7 +73,7 @@ const DocteurForm = () => {
         message: 'Succès',
         description: 'Les informations ont été enregistrées avec succès.',
       });
-      navigate('/client');
+      navigate('/liste_docteur');
       setIsModalVisible(false); // Fermer le modal après succès
     } catch (error) {
       console.error("Erreur lors de se connecter:", error);
@@ -82,7 +100,7 @@ const DocteurForm = () => {
       <div className="docteurForm">
         <h2 className="docteur-h2">Docteur</h2>
         <div className="docteurForm-wrapper">
-          {['username', 'prenom', 'specialite', 'phone_number', 'email', 'adresse'].map(field => (
+          {['username', 'prenom', 'phone_number', 'email', 'adresse'].map(field => (
             <div className="docteur-rows" key={field}>
               <label htmlFor={field} className="docteur-label">{field.charAt(0).toUpperCase() + field.slice(1)}</label>
               <input
@@ -96,6 +114,18 @@ const DocteurForm = () => {
               {errors[field] && <span className="error-text">{errors[field]}</span>}
             </div>
           ))}
+          <div className="docteur-rows">
+            <label htmlFor="specialite" className="docteur-label">Specialité</label>
+            <Select
+              name="specialite"
+              options={speciale?.map(item => ({
+                value: item.id_specialite,
+                label: item.nom_specialite,
+              }))}
+              placeholder="Sélectionnez une specialité..."
+              onChange={(selectedOption) => setFormData((prev) => ({ ...prev, specialite: selectedOption.value }))}
+            />
+          </div>
           <div className="docteur-rows">
             <label htmlFor="img" className="docteur-label">Image</label>
             <input
