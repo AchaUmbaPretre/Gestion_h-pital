@@ -4,12 +4,12 @@ import moment from 'moment/moment';
 import { FileExcelOutlined, FilePdfOutlined, CalendarOutlined, MoreOutlined, FilterOutlined, PlusOutlined } from '@ant-design/icons';
 import * as XLSX from 'xlsx';
 import { getPharma } from '../../services/pharmaService';
-import FormMedicament from './formMedicament/FormMedicament';
+import FormFactures from './formFactures/FormFactures';
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 
-const Medicament = () => {
+const Factures = () => {
   const [datas, setDatas] = useState([]);
   const [dateFilter, setDateFilter] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -88,23 +88,35 @@ const Medicament = () => {
   const columns = [
     { title: '#', dataIndex: 'id', key: 'id', render: (text, record, index) => index + 1 },
     {
-      title: 'Nom médicament',
-      dataIndex: 'nomMedicament	',
-      key: 'nomMedicament	',
+      title: 'Patient',
+      dataIndex: 'patient',
+      key: 'patient',
       render: (text) => <Tag color='blue'>{text}</Tag>,
     },
     {
-      title: 'Description',
-      dataIndex: 'description',
-      key: 'description',
+      title: 'date Emission',
+      dataIndex: 'date_emission',
+      key: 'date_emission',
       render: (text) => <Tag color='blue'>{text}</Tag>,
     },
     {
-      title: 'Stock',
-      dataIndex: 'stock',
-      key: 'stock',
+      title: 'Date limite',
+      dataIndex: 'date_limite',
+      key: 'date_limite',
       render: (text) => <Tag color='blue'>{text}</Tag>,
     },
+    {
+        title: 'Montant total',
+        dataIndex: 'montant_total',
+        key: 'montant_total',
+        render: (text) => <Tag color='blue'>{text}</Tag>,
+      },
+      {
+        title: 'Status',
+        dataIndex: 'status',
+        key: 'status',
+        render: (text) => <Tag color='blue'>{text}</Tag>,
+      },
     {
       title: 'Actions',
       key: 'actions',
@@ -119,7 +131,7 @@ const Medicament = () => {
   return (
     <Card
       style={{padding:"20px 0px"}}
-      title="Dépot des médicaments"
+      title="Liste d'ordonnance"
       extra={
         <Space size="middle">
           <RangePicker onChange={handleDateFilterChange} />
@@ -150,17 +162,17 @@ const Medicament = () => {
         />
       )}
       <Modal
-        title="Ajouter un médicament"
+        title="Factures"
         visible={isModalVisible}
         onOk={handleOk}
         onCancel={handleCancel}
         footer={null} 
         width={1000}
       >
-        <FormMedicament />
+        <FormFactures />
       </Modal>
     </Card>
   );
 };
 
-export default Medicament;
+export default Factures;

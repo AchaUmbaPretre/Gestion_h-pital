@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Input, Select, Skeleton, Table, Tag, notification, Card, Space, Button, Badge, DatePicker, Dropdown, Menu, Modal } from 'antd';
-import moment from 'moment/moment';
-import { FileExcelOutlined, FilePdfOutlined, CalendarOutlined, MoreOutlined, FilterOutlined, PlusOutlined } from '@ant-design/icons';
+import { Input, Select, Skeleton, Table, Tag, notification, Card, Space, Button, Badge, DatePicker, Dropdown, Menu, Modal } from 'antd';import moment from 'moment';
+import 'moment/locale/fr'; // Pour utiliser le format français
+import { MoreOutlined, UserOutlined,FileExcelOutlined,FilePdfOutlined,FilterOutlined,PlusOutlined, CalendarOutlined, ClockCircleOutlined, FileTextOutlined } from '@ant-design/icons';
 import * as XLSX from 'xlsx';
-import { getPharma } from '../../services/pharmaService';
-import FormMedicament from './formMedicament/FormMedicament';
+import { getRdv } from '../../../services/rdvService';
+import FormRdv from '../formRdv/FormRdv';
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 
-const Medicament = () => {
+const ListeRdv = () => {
   const [datas, setDatas] = useState([]);
   const [dateFilter, setDateFilter] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -19,8 +19,8 @@ const Medicament = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await getPharma(dateFilter);
-        setDatas(response.data.data);
+        const response = await getRdv(dateFilter);
+        setDatas(response.data);
         setLoading(false);
       } catch (error) {
         notification.error({
@@ -69,10 +69,11 @@ const Medicament = () => {
     setIsModalVisible(false);
   };
 
-  const filteredData = Array.isArray(datas) ? datas.filter(item =>
-    item.nomMedicament.toLowerCase().includes(searchTerm)
-  ) : [];
+  const filteredData = datas?.filter(item =>
+    item.type_rendezvous.toLowerCase().includes(searchTerm)
+  );
   
+  console.log(filteredData)
 
   const menu = (
     <Menu>
@@ -86,24 +87,71 @@ const Medicament = () => {
   );
 
   const columns = [
-    { title: '#', dataIndex: 'id', key: 'id', render: (text, record, index) => index + 1 },
-    {
-      title: 'Nom médicament',
-      dataIndex: 'nomMedicament	',
-      key: 'nomMedicament	',
-      render: (text) => <Tag color='blue'>{text}</Tag>,
+    { 
+      title: '#', 
+      dataIndex: 'id', 
+      key: 'id', 
+      render: (text, record, index) => index + 1 
     },
     {
-      title: 'Description',
-      dataIndex: 'description',
-      key: 'description',
-      render: (text) => <Tag color='blue'>{text}</Tag>,
+      title: 'Patient',
+      dataIndex: 'id_patient',
+      key: 'id_patient',
+      render: (text) => (
+        <Tag color='blue' icon={<UserOutlined />}>
+          {text}
+        </Tag>
+      ),
     },
     {
-      title: 'Stock',
-      dataIndex: 'stock',
-      key: 'stock',
-      render: (text) => <Tag color='blue'>{text}</Tag>,
+      title: 'Utilisateur',
+      dataIndex: 'id_utilisateur',
+      key: 'id_utilisateur',
+      render: (text) => (
+        <Tag color='blue' icon={<UserOutlined />}>
+          {text}
+        </Tag>
+      ),
+    },
+    {
+      title: 'Date',
+      dataIndex: 'date_rdv',
+      key: 'date_rdv',
+      render: (text) => (
+        <Tag color='blue' icon={<CalendarOutlined />}>
+          {moment(text).locale('fr').format('DD MMMM YYYY')}
+        </Tag>
+      ),
+    },
+    {
+      title: 'Heure debut',
+      dataIndex: 'heure_debut',
+      key: 'heure_debut',
+      render: (text) => (
+        <Tag color='blue' icon={<ClockCircleOutlined />}>
+          {moment(text, 'HH:mm').format('HH:mm')}
+        </Tag>
+      ),
+    },
+    {
+      title: 'Heure fin',
+      dataIndex: 'heure_fin',
+      key: 'heure_fin',
+      render: (text) => (
+        <Tag color='blue' icon={<ClockCircleOutlined />}>
+          {moment(text, 'HH:mm').format('HH:mm')}
+        </Tag>
+      ),
+    },
+    {
+      title: 'Type rendezvous',
+      dataIndex: 'type_rendezvous',
+      key: 'type_rendezvous',
+      render: (text) => (
+        <Tag color='blue' icon={<FileTextOutlined />}>
+          {text}
+        </Tag>
+      ),
     },
     {
       title: 'Actions',
@@ -115,11 +163,12 @@ const Medicament = () => {
       ),
     },
   ];
+  
 
   return (
     <Card
       style={{padding:"20px 0px"}}
-      title="Dépot des médicaments"
+      title="Liste des rendez vous"
       extra={
         <Space size="middle">
           <RangePicker onChange={handleDateFilterChange} />
@@ -132,7 +181,7 @@ const Medicament = () => {
             <Button icon={<FilterOutlined />}>Exporter</Button>
           </Dropdown>
           <Button type="primary" icon={<PlusOutlined />} onClick={showModal}>
-            Ajouter un Docteur
+            Rendez-vous
           </Button>
         </Space>
       }
@@ -150,17 +199,17 @@ const Medicament = () => {
         />
       )}
       <Modal
-        title="Ajouter un médicament"
+        title=""
         visible={isModalVisible}
         onOk={handleOk}
         onCancel={handleCancel}
         footer={null} 
-        width={1000}
+        width={700}
       >
-        <FormMedicament />
+        <FormRdv />
       </Modal>
     </Card>
   );
 };
 
-export default Medicament;
+export default ListeRdv;

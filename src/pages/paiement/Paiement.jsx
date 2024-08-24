@@ -4,12 +4,12 @@ import moment from 'moment/moment';
 import { FileExcelOutlined, FilePdfOutlined, CalendarOutlined, MoreOutlined, FilterOutlined, PlusOutlined } from '@ant-design/icons';
 import * as XLSX from 'xlsx';
 import { getPharma } from '../../services/pharmaService';
-import FormMedicament from './formMedicament/FormMedicament';
+import FormPaiement from './formPaiement/FormPaiement';
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 
-const Medicament = () => {
+const Paiement = () => {
   const [datas, setDatas] = useState([]);
   const [dateFilter, setDateFilter] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -88,23 +88,29 @@ const Medicament = () => {
   const columns = [
     { title: '#', dataIndex: 'id', key: 'id', render: (text, record, index) => index + 1 },
     {
-      title: 'Nom médicament',
-      dataIndex: 'nomMedicament	',
-      key: 'nomMedicament	',
+      title: 'Montant',
+      dataIndex: '	amount',
+      key: '	amount	',
       render: (text) => <Tag color='blue'>{text}</Tag>,
     },
     {
-      title: 'Description',
-      dataIndex: 'description',
-      key: 'description',
+      title: 'Date paiement',
+      dataIndex: 'date_paiement',
+      key: 'date_paiement',
       render: (text) => <Tag color='blue'>{text}</Tag>,
     },
     {
-      title: 'Stock',
-      dataIndex: 'stock',
-      key: 'stock',
+      title: 'Methode paiement',
+      dataIndex: 'methode_paiement',
+      key: 'methode_paiement',
       render: (text) => <Tag color='blue'>{text}</Tag>,
     },
+    {
+        title: 'Transaction',
+        dataIndex: 'transaction_id',
+        key: 'transaction_id',
+        render: (text) => <Tag color='blue'>{text}</Tag>,
+      },
     {
       title: 'Actions',
       key: 'actions',
@@ -119,7 +125,7 @@ const Medicament = () => {
   return (
     <Card
       style={{padding:"20px 0px"}}
-      title="Dépot des médicaments"
+      title="Liste d'ordonnance"
       extra={
         <Space size="middle">
           <RangePicker onChange={handleDateFilterChange} />
@@ -157,10 +163,10 @@ const Medicament = () => {
         footer={null} 
         width={1000}
       >
-        <FormMedicament />
+        <FormPaiement />
       </Modal>
     </Card>
   );
 };
 
-export default Medicament;
+export default Paiement;

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Input, Select, Skeleton, Table, Tag, notification, Card, Space, Button, Badge, DatePicker, Dropdown, Menu, Modal } from 'antd';
-import { FileExcelOutlined, FilePdfOutlined, CalendarOutlined, MoreOutlined, FilterOutlined, PlusOutlined } from '@ant-design/icons';
+import { FileExcelOutlined, FilePdfOutlined, CalendarOutlined, MoreOutlined, FilterOutlined, PlusOutlined, UserOutlined, FileTextOutlined } from '@ant-design/icons';
 import * as XLSX from 'xlsx';
 import moment from 'moment';
 import { getAdmission } from '../../services/admissionService';
@@ -20,7 +20,7 @@ const Admission = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await getAdmission(dateFilter); // Assuming `getDocteur` is defined elsewhere
+        const response = await getAdmission(dateFilter); // Assuming `getAdmission` is defined elsewhere
         setData(response.data);
         setFilteredData(response.data); // Assuming filteredData is initially same as data
       } catch (error) {
@@ -52,8 +52,8 @@ const Admission = () => {
   const exportToExcel = () => {
     const ws = XLSX.utils.json_to_sheet(data);
     const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Docteurs');
-    XLSX.writeFile(wb, 'docteurs_data.xlsx');
+    XLSX.utils.book_append_sheet(wb, ws, 'Admissions');
+    XLSX.writeFile(wb, 'admissions_data.xlsx');
   };
 
   const exportToPDF = () => {
@@ -87,18 +87,31 @@ const Admission = () => {
   );
 
   const columns = [
-    { title: '#', dataIndex: 'id', key: 'id', render: (text, record, index) => index + 1 },
+    {
+      title: '#',
+      dataIndex: 'id',
+      key: 'id',
+      render: (text, record, index) => index + 1,
+    },
     {
       title: 'Patient',
       dataIndex: 'patientId',
       key: 'patientId',
-      render: (text) => <Tag color='blue'>{text}</Tag>,
+      render: (text) => (
+        <Tag color='blue' icon={<UserOutlined />}>
+          {text}
+        </Tag>
+      ),
     },
     {
       title: 'Service',
       dataIndex: 'serviceId',
       key: 'serviceId',
-      render: (text) => <Tag color='blue'>{text}</Tag>,
+      render: (text) => (
+        <Tag color='blue' icon={<FileTextOutlined />}>
+          {text}
+        </Tag>
+      ),
     },
     {
       title: 'Date Admission',
@@ -108,7 +121,7 @@ const Admission = () => {
       sortDirections: ['descend', 'ascend'],
       render: (text) => (
         <Tag icon={<CalendarOutlined />} color="blue">
-          {moment(text).format('DD-MM-yyyy')}
+          {moment(text).format('DD-MM-YYYY')}
         </Tag>
       ),
     },
@@ -120,7 +133,7 @@ const Admission = () => {
       sortDirections: ['descend', 'ascend'],
       render: (text) => (
         <Tag icon={<CalendarOutlined />} color="blue">
-          {moment(text).format('DD-MM-yyyy')}
+          {moment(text).format('DD-MM-YYYY')}
         </Tag>
       ),
     },
@@ -128,7 +141,13 @@ const Admission = () => {
       title: 'Raison Admission',
       dataIndex: 'raisonAdmission',
       key: 'raisonAdmission',
-      render: (text) => <Badge color={text === 'Urgent' ? 'red' : 'green'} text={text} />,
+      render: (text) => (
+        <Badge
+          color={text === 'Urgent' ? 'red' : 'green'}
+          text={text}
+          icon={<FileTextOutlined />}
+        />
+      ),
     },
     {
       title: 'Actions',
@@ -163,7 +182,7 @@ const Admission = () => {
           </Space>
         }
         bordered={false}
-        className="listeDocteur-card"
+        className="listeAdmission-card"
       >
         {loading ? (
           <Skeleton active />
@@ -183,7 +202,7 @@ const Admission = () => {
           footer={null}
           width={850}
         >
-          <FormAdmission/>
+          <FormAdmission />
         </Modal>
       </Card>
     </>

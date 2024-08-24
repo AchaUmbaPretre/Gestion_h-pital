@@ -54,6 +54,7 @@ const PatientForm = () => {
         description: 'Les informations ont été enregistrées avec succès.',
       });
       setIsModalVisible(false);
+      window.location.reload();
     } catch (error) {
       console.error("Erreur lors de l'enregistrement:", error);
       notification.error({

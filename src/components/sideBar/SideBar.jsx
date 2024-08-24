@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Layout, Menu } from 'antd';
 import {
   UserOutlined,
@@ -12,6 +12,8 @@ import {
   FormOutlined,
   FundOutlined,
   SettingOutlined,
+  DollarOutlined,
+  CreditCardOutlined,
 } from '@ant-design/icons';
 import './sideBar.css'; // Assurez-vous d'importer le fichier CSS
 import { Link } from 'react-router-dom';
@@ -20,13 +22,26 @@ const { Sider } = Layout;
 const { SubMenu, Item } = Menu;
 
 const SideBar = () => {
+  const [openKeys, setOpenKeys] = useState([]);
+
+  const onOpenChange = (keys) => {
+    const latestOpenKey = keys.find((key) => openKeys.indexOf(key) === -1);
+    setOpenKeys(latestOpenKey ? [latestOpenKey] : []);
+  };
+
   return (
     <div className="sidebar">
       <Sider>
         <Menu
           mode="inline"
+          openKeys={openKeys}
+          onOpenChange={onOpenChange}
           defaultSelectedKeys={['/']}
-          style={{ height: '100%', borderRight: 0, width: '250px' }}
+          style={{
+            height: '100%',
+            borderRight: 0,
+            width: '260px',
+          }}
         >
           <Item key="/" icon={<HomeOutlined />}>
             <Link to="/">Accueil</Link>
@@ -54,7 +69,6 @@ const SideBar = () => {
                 Liste des patients
               </Link>
             </Menu.Item>
-            <Menu.Item key="7">Historique des consultations</Menu.Item>
           </SubMenu>
           <SubMenu key="sub4" icon={<AppstoreOutlined />} title="Service">
             <Menu.Item key="9">
@@ -76,9 +90,6 @@ const SideBar = () => {
             </Menu.Item>
           </SubMenu>
           <SubMenu key="sub5" icon={<AuditOutlined />} title="Admission">
-{/*             <Menu.Item key="10">
-              Nouvelle admission
-            </Menu.Item> */}
             <Menu.Item key="11">
               <Link to='/admission'>
                 Liste des admissions
@@ -86,36 +97,59 @@ const SideBar = () => {
             </Menu.Item>
           </SubMenu>
           <SubMenu key="sub7" icon={<MedicineBoxOutlined />} title="Traitement">
-            <Menu.Item key="14">Nouveau traitement</Menu.Item>
             <Menu.Item key="15">
               <Link to='/traitement'>
-                Liste des traitements
+                Traitements
               </Link>
             </Menu.Item>
           </SubMenu>
           <SubMenu key="sub8" icon={<MedicineBoxOutlined />} title="Médicament">
-            <Menu.Item key="16">Nouveau médicament</Menu.Item>
             <Menu.Item key="17">
-              <Link to='/liste_medicament'>
-                Liste des médicaments
+              <Link to='/medicament'>
+                Médicaments
               </Link>
             </Menu.Item>
-            <Menu.Item key="18">Gérer le stock de médicaments</Menu.Item>
           </SubMenu>
           <SubMenu key="sub9" icon={<FileTextOutlined />} title="Ordonnance">
             <Menu.Item key="19">Nouvelle ordonnance</Menu.Item>
             <Menu.Item key="20">
-              <Link to='/liste_ordonnance'>
+              <Link to='/ordonnance'>
                 Liste des ordonnances
               </Link>
             </Menu.Item>
           </SubMenu>
-          <SubMenu key="sub2" icon={<SolutionOutlined />} title="Utilisateur">
-            <Menu.Item key="3">
-              <Link to='/form_user'>
-                Nouveau compte
+          <SubMenu key="sub11" icon={<CalendarOutlined />} title="Rendez-vous">
+            <Menu.Item key="25">
+              <Link to='/liste_rdv'>
+                Liste des rendez-vous
               </Link>
             </Menu.Item>
+          </SubMenu>
+          <SubMenu key="sub12" icon={<DollarOutlined />} title="Paiement">
+            <Menu.Item key="26">
+              <Link to='/paiement'>
+                Paiements en attente
+              </Link>
+            </Menu.Item>
+            <Menu.Item key="27">
+              <Link to='/historique_paiement'>
+                Historique des paiements
+              </Link>
+            </Menu.Item>
+          </SubMenu>
+          <SubMenu key="sub13" icon={<CreditCardOutlined />} title="Facturation">
+            <Menu.Item key="28">
+              <Link to='/creer_facture'>
+                Créer une facture
+              </Link>
+            </Menu.Item>
+            <Menu.Item key="29">
+              <Link to='/liste_facture'>
+                Liste des factures
+              </Link>
+            </Menu.Item>
+          </SubMenu>
+          <SubMenu key="sub2" icon={<SolutionOutlined />} title="Utilisateur">
             <Menu.Item key="4">
               <Link to='/liste_user'>
                 Liste des utilisateurs
@@ -125,18 +159,6 @@ const SideBar = () => {
           <SubMenu key="sub10" icon={<FundOutlined />} title="Rapports">
             <Menu.Item key="21">Rapports d'activité</Menu.Item>
             <Menu.Item key="22">Statistiques des patients</Menu.Item>
-          </SubMenu>
-          <SubMenu key="sub11" icon={<CalendarOutlined />} title="Rendez-vous">
-            <Menu.Item key="24">
-              <Link to='/nouveau_rendezvous'>
-                Nouveau rendez-vous
-              </Link>
-            </Menu.Item>
-            <Menu.Item key="25">
-              <Link to='/liste_rdv'>
-                Liste des rendez-vous
-              </Link>
-            </Menu.Item>
           </SubMenu>
           <Item key="23" icon={<SettingOutlined />}>
             Paramètres

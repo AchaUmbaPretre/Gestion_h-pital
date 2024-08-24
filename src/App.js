@@ -18,6 +18,10 @@ import ListeConsultation from './pages/consultation/listeConsultation/ListeConsu
 import Rdv from './pages/rdv/Rdv';
 import Admission from './pages/admission/Admission';
 import Traitement from './pages/traitement/Traitement';
+import Medicament from './pages/medicament/Medicament';
+import Ordonnance from './pages/ordonnance/Ordonnance';
+import Factures from './pages/factures/Factures';
+import Paiement from './pages/paiement/Paiement';
 
 function App() {
   const [currentUser, setCurrentUser] = useState(true);
@@ -93,6 +97,22 @@ function App() {
         {
           path: '/traitement',
           element: <Traitement />
+        },
+        {
+          path: '/medicament',
+          element: <Medicament />
+        },
+        {
+          path: '/ordonnance',
+          element: <Ordonnance />
+        },
+        {
+          path: '/factures',
+          element: <Factures />
+        },
+        {
+          path: '/paiement',
+          element: <Paiement />
         },
         {
           path: '/liste_rdv',

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Input, Select, Skeleton, Table, Tag, notification, Button, Space, Card, Badge, DatePicker, Dropdown, Menu, Row, Col, Divider } from 'antd';
 import { getPatient } from '../../services/patientService';
-import { CalendarOutlined, FileExcelOutlined, FilePdfOutlined, MoreOutlined, FilterOutlined } from '@ant-design/icons';
+import { FileExcelOutlined, FilePdfOutlined, FilterOutlined, UserOutlined, IdcardOutlined, HomeOutlined, PhoneOutlined, MedicineBoxOutlined, CalendarOutlined, MoreOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import { saveAs } from 'file-saver';
 import * as XLSX from 'xlsx';
@@ -91,54 +91,83 @@ const Patient = () => {
   );
 
   const columns = [
-    { title: '#', dataIndex: 'id', key: 'id', render: (text, record, index) => index + 1 },
+    {
+      title: '#',
+      dataIndex: 'id',
+      key: 'id',
+      render: (text, record, index) => index + 1,
+    },
     {
       title: 'Nom',
       dataIndex: 'nom_patient',
       key: 'nom_patient',
-      render: (text) => <Tag color='blue'>{text}</Tag>,
+      render: (text) => (
+        <Tag color='blue' icon={<UserOutlined />}>
+          {text}
+        </Tag>
+      ),
     },
     {
       title: 'Prénom',
       dataIndex: 'prenom',
       key: 'prenom',
-      render: (text) => <Tag color='blue'>{text}</Tag>,
+      render: (text) => (
+        <Tag color='blue' icon={<UserOutlined />}>
+          {text}
+        </Tag>
+      ),
     },
     {
       title: 'Sexe',
       dataIndex: 'sexe',
       key: 'sexe',
-      render: (text) => <Tag color='blue'>{text || 'Aucun'}</Tag>,
+      render: (text) => (
+        <Tag color='blue' icon={<IdcardOutlined />}>
+          {text || 'Aucun'}
+        </Tag>
+      ),
     },
     {
       title: 'Adresse',
       dataIndex: 'adresse',
       key: 'adresse',
-      render: (text) => <Tag color='blue'>{text}</Tag>,
+      render: (text) => (
+        <Tag color='blue' icon={<HomeOutlined />}>
+          {text}
+        </Tag>
+      ),
     },
     {
       title: 'Téléphone',
       dataIndex: 'tel',
       key: 'tel',
-      render: (text) => <Tag color='blue'>{text || 'Aucun'}</Tag>,
+      render: (text) => (
+        <Tag color='blue' icon={<PhoneOutlined />}>
+          {text || 'Aucun'}
+        </Tag>
+      ),
     },
     {
       title: 'Type de patient',
       dataIndex: 'typePatient',
       key: 'typePatient',
       render: (text) => (
-        <Badge color={text === 'Urgent' ? 'red' : 'green'} text={text} />
+        <Badge
+          color={text === 'Urgent' ? 'red' : 'green'}
+          text={text}
+          icon={text === 'Urgent' ? <MedicineBoxOutlined /> : <MedicineBoxOutlined />}
+        />
       ),
     },
     {
-      title: "Date d'opération",
-      dataIndex: 'date_operation',
-      key: 'date_operation',
-      sorter: (a, b) => moment(a.date_operation) - moment(b.date_operation),
+      title: "Date de Naiss",
+      dataIndex: 'dateNaissance',
+      key: 'dateNaissance',
+      sorter: (a, b) => moment(a.dateNaissance) - moment(b.dateNaissance),
       sortDirections: ['descend', 'ascend'],
       render: (text) => (
-        <Tag icon={<CalendarOutlined />} color="blue">
-          {moment(text).format('DD-MM-yyyy')}
+        <Tag color='blue' icon={<CalendarOutlined />}>
+          {moment(text).format('DD-MM-YYYY')}
         </Tag>
       ),
     },
@@ -152,6 +181,7 @@ const Patient = () => {
       ),
     },
   ];
+  
 
   return (
     <Card

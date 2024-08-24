@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Input, Select, Skeleton, Table, Tag, notification, Card, Space, Button, Badge, DatePicker, Dropdown, Menu, Modal } from 'antd';
-import { FileExcelOutlined, FilePdfOutlined, CalendarOutlined, MoreOutlined, FilterOutlined, PlusOutlined } from '@ant-design/icons';
+import { FileExcelOutlined, FilePdfOutlined, CalendarOutlined, MoreOutlined, FilterOutlined, PlusOutlined, MedicineBoxOutlined, BellOutlined, FieldNumberOutlined, ReadOutlined } from '@ant-design/icons';
 import * as XLSX from 'xlsx';
 import moment from 'moment';
 import { getTraitement } from '../../services/traitementService';
@@ -8,6 +8,7 @@ import FormTraitement from './formTraitement/FormTraitement';
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
+
 
 const Traitement = () => {
   const [data, setData] = useState([]);
@@ -35,6 +36,84 @@ const Traitement = () => {
 
     fetchData();
   }, [dateFilter]);
+
+  const columns = [
+    {
+      title: '#',
+      dataIndex: 'id',
+      key: 'id',
+      render: (text, record, index) => index + 1,
+    },
+    {
+      title: 'Consultation',
+      dataIndex: 'consultationId',
+      key: 'consultationId',
+      render: (text) => (
+        <Tag color='blue' icon={<FieldNumberOutlined />}>
+          {text}
+        </Tag>
+      ),
+    },
+    {
+      title: 'Medicament',
+      dataIndex: 'medicament',
+      key: 'medicament',
+      render: (text) => (
+        <Tag color='blue' icon={<MedicineBoxOutlined />}>
+          {text}
+        </Tag>
+      ),
+    },
+    {
+      title: 'Dose',
+      dataIndex: 'dose',
+      key: 'dose',
+      render: (text) => (
+        <Tag color='blue' icon={<FieldNumberOutlined />}>
+          {text}
+        </Tag>
+      ),
+    },
+    {
+      title: 'Frequence',
+      dataIndex: 'frequence',
+      key: 'frequence',
+      render: (text) => (
+        <Tag color='blue' icon={<BellOutlined />}>
+          {text}
+        </Tag>
+      ),
+    },
+    {
+      title: 'Durée',
+      dataIndex: 'duree',
+      key: 'duree',
+      render: (text) => (
+        <Tag color='blue' icon={<CalendarOutlined />}>
+          {text}
+        </Tag>
+      ),
+    },
+    {
+      title: 'Instructions',
+      dataIndex: 'instructions',
+      key: 'instructions',
+      render: (text) => (
+        <Tag color='blue' icon={<ReadOutlined />}>
+          {text}
+        </Tag>
+      ),
+    },
+    {
+      title: 'Actions',
+      key: 'actions',
+      render: () => (
+        <Dropdown overlay={menu} trigger={['click']}>
+          <Button icon={<MoreOutlined />} />
+        </Dropdown>
+      ),
+    },
+  ];
 
   const handleDateFilterChange = (dates) => {
     setDateFilter(dates ? dates.map(date => date.format('YYYY-MM-DD')) : null);
@@ -86,61 +165,6 @@ const Traitement = () => {
     </Menu>
   );
 
-  const columns = [
-    { title: '#', dataIndex: 'id', key: 'id', render: (text, record, index) => index + 1 },
-    {
-      title: 'Patient',
-      dataIndex: 'patientId',
-      key: 'patientId',
-      render: (text) => <Tag color='blue'>{text}</Tag>,
-    },
-    {
-      title: 'Service',
-      dataIndex: 'serviceId',
-      key: 'serviceId',
-      render: (text) => <Tag color='blue'>{text}</Tag>,
-    },
-    {
-      title: 'Date Admission',
-      dataIndex: 'dateAdmission',
-      key: 'dateAdmission',
-      sorter: (a, b) => moment(a.dateAdmission) - moment(b.dateAdmission),
-      sortDirections: ['descend', 'ascend'],
-      render: (text) => (
-        <Tag icon={<CalendarOutlined />} color="blue">
-          {moment(text).format('DD-MM-yyyy')}
-        </Tag>
-      ),
-    },
-    {
-      title: 'Date Sortie',
-      dataIndex: 'dateSortie',
-      key: 'dateSortie',
-      sorter: (a, b) => moment(a.dateSortie) - moment(b.dateSortie),
-      sortDirections: ['descend', 'ascend'],
-      render: (text) => (
-        <Tag icon={<CalendarOutlined />} color="blue">
-          {moment(text).format('DD-MM-yyyy')}
-        </Tag>
-      ),
-    },
-    {
-      title: 'Raison Admission',
-      dataIndex: 'raisonAdmission',
-      key: 'raisonAdmission',
-      render: (text) => <Badge color={text === 'Urgent' ? 'red' : 'green'} text={text} />,
-    },
-    {
-      title: 'Actions',
-      key: 'actions',
-      render: () => (
-        <Dropdown overlay={menu} trigger={['click']}>
-          <Button icon={<MoreOutlined />} />
-        </Dropdown>
-      ),
-    },
-  ];
-
   return (
     <>
       <Card
@@ -158,7 +182,7 @@ const Traitement = () => {
               <Button icon={<FilterOutlined />}>Exporter</Button>
             </Dropdown>
             <Button type="primary" icon={<PlusOutlined />} onClick={showModal}>
-              Ajouter un traitement
+              traitement
             </Button>
           </Space>
         }
@@ -183,7 +207,7 @@ const Traitement = () => {
           footer={null}
           width={1100}
         >
-          <FormTraitement/>
+          <FormTraitement />
         </Modal>
       </Card>
     </>

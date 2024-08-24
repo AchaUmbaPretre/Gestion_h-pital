@@ -1,116 +1,178 @@
-import React, { useState, useEffect } from 'react'
-import { Input, Select, Skeleton, Table, Tag } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Input, Select, Skeleton, Table, Tag, notification, Card, Space, Button, Badge, DatePicker, Dropdown, Menu, Modal } from 'antd';
+import moment from 'moment/moment';
+import { FileExcelOutlined, FilePdfOutlined, CalendarOutlined, MoreOutlined, FilterOutlined, PlusOutlined } from '@ant-design/icons';
+import * as XLSX from 'xlsx';
+import { getPharma } from '../../services/pharmaService';
+import { getUser } from '../../services/userService';
 
+const { Option } = Select;
+const { RangePicker } = DatePicker;
 
 const Utilisateur = () => {
-  const [data, setData] = useState([]);
-  const [dateFilter, setDateFilter] = useState('today');
+  const [datas, setDatas] = useState([]);
+  const [dateFilter, setDateFilter] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   useEffect(() => {
-    // Simulating a fetch request to get the data based on the date filter
-    const fetchData = () => {
-      setLoading(true);
-      setTimeout(() => {
-        // Replace this with actual data fetching logic
-        const fetchedData = [
-          {
-            key: '1',
-            name: 'Dr. Smith',
-            specialty: 'Cardiology',
-            age: 45,
-            tags: ['experienced', 'friendly'],
-          },
-          {
-            key: '2',
-            name: 'Dr. Doe',
-            specialty: 'Neurology',
-            age: 50,
-            tags: ['expert', 'detail-oriented'],
-          },
-          // Add more data as needed
-        ];
-        setData(fetchedData);
+    const fetchData = async () => {
+      try {
+        const response = await getUser(dateFilter);
+        setDatas(response.data.data);
         setLoading(false);
-      }, 2000);
+      } catch (error) {
+        notification.error({
+          message: 'Erreur de chargement',
+          description: 'Une erreur est survenue lors du chargement des données.',
+        });
+        setLoading(false);
+      }
     };
 
     fetchData();
   }, [dateFilter]);
 
-  const handleDateFilterChange = (value) => {
-    setDateFilter(value);
+  const handleSearch = (value) => {
+    setSearchTerm(value.toLowerCase());
   };
 
+  const handleDateFilterChange = (dates) => {
+    setDateFilter(dates);
+  };
+
+  const exportToExcel = () => {
+    const ws = XLSX.utils.json_to_sheet(datas);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Docteurs');
+    XLSX.writeFile(wb, 'docteurs_data.xlsx');
+  };
+
+  const exportToPDF = () => {
+    // Implémentation pour l'exportation en PDF
+    notification.info({
+      message: 'Fonctionnalité PDF',
+      description: 'Exportation PDF en cours de développement.',
+    });
+  };
+
+  const showModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleOk = () => {
+    setIsModalVisible(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
+
+  const filteredData = Array.isArray(datas) ? datas.filter(item =>
+    item.nomMedicament.toLowerCase().includes(searchTerm)
+  ) : [];
+  
+
+  const menu = (
+    <Menu>
+      <Menu.Item key="1" icon={<FileExcelOutlined />} onClick={exportToExcel}>
+        Exporter en Excel
+      </Menu.Item>
+      <Menu.Item key="2" icon={<FilePdfOutlined />} onClick={exportToPDF}>
+        Exporter en PDF
+      </Menu.Item>
+    </Menu>
+  );
+
   const columns = [
+    { title: '#', dataIndex: 'id', key: 'id', render: (text, record, index) => index + 1 },
     {
       title: 'Nom',
-      dataIndex: 'name',
-      key: 'name',
-      sorter: (a, b) => a.name.localeCompare(b.name),
+      dataIndex: 'username ',
+      key: 'username ',
+      render: (text) => <Tag color='blue'>{text}</Tag>,
     },
     {
-      title: 'Spécialité',
-      dataIndex: 'specialty',
-      key: 'specialty',
-      filters: [
-        { text: 'Cardiology', value: 'Cardiology' },
-        { text: 'Neurology', value: 'Neurology' },
-        // Add more filters as needed
-      ],
-      onFilter: (value, record) => record.specialty.includes(value),
+      title: 'Email',
+      dataIndex: 'email',
+      key: 'email',
+      render: (text) => <Tag color='blue'>{text}</Tag>,
     },
     {
-      title: 'Âge',
-      dataIndex: 'age',
-      key: 'age',
-      sorter: (a, b) => a.age - b.age,
+      title: 'Prenom',
+      dataIndex: 'prenom',
+      key: 'prenom',
+      render: (text) => <Tag color='blue'>{text}</Tag>,
     },
     {
-      title: 'Tags',
-      key: 'tags',
-      dataIndex: 'tags',
-      render: (tags) => (
-        <>
-          {tags.map((tag) => {
-            let color = tag.length > 5 ? 'geekblue' : 'green';
-            if (tag === 'loser') {
-              color = 'volcano';
-            }
-            return (
-              <Tag color={color} key={tag}>
-                {tag.toUpperCase()}
-              </Tag>
-            );
-          })}
-        </>
+        title: 'Role',
+        dataIndex: 'role',
+        key: 'role',
+        render: (text) => <Tag color='blue'>{text}</Tag>,
+      },
+      {
+        title: 'Specialite',
+        dataIndex: 'specialite',
+        key: 'specialite',
+        render: (text) => <Tag color='blue'>{text}</Tag>,
+      },
+    {
+      title: 'Actions',
+      key: 'actions',
+      render: () => (
+        <Dropdown overlay={menu} trigger={['click']}>
+          <Button icon={<MoreOutlined />} />
+        </Dropdown>
       ),
     },
   ];
 
   return (
-    <>
-      <div className="listeDocteur">
-        <div className="listeDocteur-top">
-          <h2 className="listeDocteur-h2">Liste des utilisateurs</h2>
-          <div className="listeDocteur-title">
-            <Input.Search />
-          </div>
-        </div>
-        <div className="listeDocteur-content">
-          {loading ? (
-            <Skeleton active />
-          ) : (
-            <Table
-              columns={columns}
-              dataSource={data}
-              pagination={{ pageSize: 5 }}
-            />
-          )}
-        </div>
-      </div>
-    </>
-  )
-}
+    <Card
+      style={{padding:"20px 0px"}}
+      title="Liste des utilisateurs"
+      extra={
+        <Space size="middle">
+          <RangePicker onChange={handleDateFilterChange} />
+          <Input.Search
+            placeholder="Rechercher..."
+            onSearch={handleSearch}
+            style={{ width: 300 }}
+          />
+          <Dropdown overlay={menu} trigger={['click']}>
+            <Button icon={<FilterOutlined />}>Exporter</Button>
+          </Dropdown>
+          <Button type="primary" icon={<PlusOutlined />} onClick={showModal}>
+            Ajouter un Docteur
+          </Button>
+        </Space>
+      }
+      bordered={false}
+      className="listeDocteur-card"
+    >
+      {loading ? (
+        <Skeleton active />
+      ) : (
+        <Table
+          columns={columns}
+          dataSource={filteredData}
+          pagination={{ pageSize: 5 }}
+          rowKey="id_docteur"
+        />
+      )}
+      <Modal
+        title="Ajouter un médicament"
+        visible={isModalVisible}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        footer={null} 
+        width={1000}
+      >
+{/*         <FormPaiement /> */}
+      </Modal>
+    </Card>
+  );
+};
 
-export default Utilisateur
+export default Utilisateur;

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Input, Select, Skeleton, Table, Tag, notification, Card, Space, Button, Badge, DatePicker, Dropdown, Menu, Modal } from 'antd';
 import moment from 'moment/moment';
 import { getDocteur } from '../../../services/docteurService';
-import { FileExcelOutlined, FilePdfOutlined, CalendarOutlined, MoreOutlined, FilterOutlined, PlusOutlined } from '@ant-design/icons';
+import { FileExcelOutlined,FilterOutlined, FilePdfOutlined, UserOutlined, FileTextOutlined, CalendarOutlined, MoreOutlined } from '@ant-design/icons';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import { getConsultation } from '../../../services/consultservice';
@@ -87,49 +87,78 @@ const ListeConsultation = () => {
   );
 
   const columns = [
-    { title: '#', dataIndex: 'id', key: 'id', render: (text, record, index) => index + 1 },
+    {
+      title: '#',
+      dataIndex: 'id',
+      key: 'id',
+      render: (text, record, index) => index + 1,
+    },
     {
       title: 'Patient',
       dataIndex: 'patientId',
-      key: 'patientId ',
-      render: (text) => <Tag color='blue'>{text}</Tag>,
+      key: 'patientId',
+      render: (text) => (
+        <Tag color='blue' icon={<UserOutlined />}>
+          {text}
+        </Tag>
+      ),
     },
     {
       title: 'Docteur',
       dataIndex: 'personnelId',
       key: 'personnelId',
-      render: (text) => <Tag color='blue'>{text}</Tag>,
+      render: (text) => (
+        <Tag color='blue' icon={<UserOutlined />}>
+          {text}
+        </Tag>
+      ),
     },
     {
       title: 'Type consultation',
-      dataIndex: 'id_typeConsultation	',
-      key: 'adresse',
-      render: (text) => <Tag color='blue'>{text}</Tag>,
+      dataIndex: 'id_typeConsultation',
+      key: 'id_typeConsultation',
+      render: (text) => (
+        <Tag color='blue' icon={<FileTextOutlined />}>
+          {text}
+        </Tag>
+      ),
     },
     {
-        title: "Date",
-        dataIndex: 'dateConsultation',
-        key: 'dateConsultation',
-        sorter: (a, b) => moment(a.dateConsultation) - moment(b.dateConsultation),
-        sortDirections: ['descend', 'ascend'],
-        render: (text) => (
-          <Tag icon={<CalendarOutlined />} color="blue">
-            {moment(text).format('DD-MM-yyyy')}
-          </Tag>
-        )
-      },
+      title: 'Date',
+      dataIndex: 'dateConsultation',
+      key: 'dateConsultation',
+      sorter: (a, b) => moment(a.dateConsultation) - moment(b.dateConsultation),
+      sortDirections: ['descend', 'ascend'],
+      render: (text) => (
+        <Tag color='blue' icon={<CalendarOutlined />}>
+          {moment(text).format('DD-MM-YYYY')}
+        </Tag>
+      ),
+    },
     {
       title: 'Diagnostic',
       dataIndex: 'diagnostic',
       key: 'diagnostic',
-      render: (text) => <Badge color={text === 'Urgent' ? 'red' : 'green'} text={text} />,
+      render: (text) => (
+        <Badge
+          color={text === 'Urgent' ? 'red' : 'green'}
+          text={text}
+          icon={<FileTextOutlined />}
+        />
+      ),
     },
     {
-        title: 'Notes',
-        dataIndex: 'notes',
-        key: 'notes',
-        render: (text) => <Badge color={text === 'Urgent' ? 'red' : 'green'} text={text} />,
-      },
+      title: 'Notes',
+      dataIndex: 'notes',
+      key: 'notes',
+      render: (text) => (
+        <Badge
+          color={text === 'Urgent' ? 'red' : 'green'}
+          text={text}
+          icon={<FileTextOutlined />}
+        />
+      ),
+    },
     {
       title: 'Actions',
       key: 'actions',
@@ -140,6 +169,7 @@ const ListeConsultation = () => {
       ),
     },
   ];
+  
 
   return (
     <Card
@@ -156,9 +186,6 @@ const ListeConsultation = () => {
           <Dropdown overlay={menu} trigger={['click']}>
             <Button icon={<FilterOutlined />}>Exporter</Button>
           </Dropdown>
-          <Button type="primary" icon={<PlusOutlined />} onClick={showModal}>
-            Ajouter un Docteur
-          </Button>
         </Space>
       }
       bordered={false}
