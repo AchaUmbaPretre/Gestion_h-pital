@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Input, Select, Skeleton, Table, Tag, notification, Card, Space, Button, Badge, DatePicker, Dropdown, Menu, Modal } from 'antd';
+import { Input, Select, Skeleton, Table, Tag, notification, Card, Space, Button, Badge, DatePicker, Dropdown, Menu, Modal, Tooltip, message, Popconfirm } from 'antd';
 import moment from 'moment/moment';
-import { getDocteur } from '../../../services/docteurService';
-import { FileExcelOutlined,FilterOutlined, FilePdfOutlined, UserOutlined, FileTextOutlined, CalendarOutlined, MoreOutlined } from '@ant-design/icons';
+import { FileOutlined,FilterOutlined,DollarOutlined,DeleteOutlined,EyeOutlined, FilePdfOutlined, UserOutlined, FileTextOutlined, CalendarOutlined, MoreOutlined } from '@ant-design/icons';
 import * as XLSX from 'xlsx';
-import { saveAs } from 'file-saver';
 import { getConsultation } from '../../../services/consultservice';
+import FicheConsultation from '../ficheConsultation/FicheConsultation';
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
@@ -16,6 +15,8 @@ const ListeConsultation = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [idConsult, setIdConsult] = useState('')
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -35,9 +36,25 @@ const ListeConsultation = () => {
     fetchData();
   }, [dateFilter]);
 
+  const handleDelete = async (id) => {
+    try {
+      // Uncomment when delete function is available
+      // await deleteClient(id);
+      setDatas(datas.filter((item) => item.id_consultation !== id));
+      message.success('Client deleted successfully');
+    } catch (error) {
+      notification.error({
+        message: 'Erreur de suppression',
+        description: 'Une erreur est survenue lors de la suppression du client.',
+      });
+    }
+  };
+
+
   const handleSearch = (value) => {
     setSearchTerm(value.toLowerCase());
   };
+
 
   const handleDateFilterChange = (dates) => {
     setDateFilter(dates);
@@ -50,17 +67,12 @@ const ListeConsultation = () => {
     XLSX.writeFile(wb, 'docteurs_data.xlsx');
   };
 
-  const exportToPDF = () => {
-    // Implémentation pour l'exportation en PDF
-    notification.info({
-      message: 'Fonctionnalité PDF',
-      description: 'Exportation PDF en cours de développement.',
-    });
-  };
 
-  const showModal = () => {
+  const handleViewDetails = (id) => {
+    setIdConsult(id)
     setIsModalVisible(true);
   };
+  
 
   const handleOk = () => {
     setIsModalVisible(false);
@@ -77,14 +89,16 @@ const ListeConsultation = () => {
 
   const menu = (
     <Menu>
-      <Menu.Item key="1" icon={<FileExcelOutlined />} onClick={exportToExcel}>
-        Exporter en Excel
+      <Menu.Item key="1" icon={<FileOutlined />} >
+        Fiche
       </Menu.Item>
-      <Menu.Item key="2" icon={<FilePdfOutlined />} onClick={exportToPDF}>
+      <Menu.Item key="2" icon={<FilePdfOutlined />} >
         Exporter en PDF
       </Menu.Item>
     </Menu>
   );
+
+  console.log(idConsult)
 
   const columns = [
     {
@@ -95,8 +109,8 @@ const ListeConsultation = () => {
     },
     {
       title: 'Patient',
-      dataIndex: 'patientId',
-      key: 'patientId',
+      dataIndex: 'nom_patient',
+      key: 'nom_patient',
       render: (text) => (
         <Tag color='blue' icon={<UserOutlined />}>
           {text}
@@ -105,8 +119,8 @@ const ListeConsultation = () => {
     },
     {
       title: 'Docteur',
-      dataIndex: 'personnelId',
-      key: 'personnelId',
+      dataIndex: 'docteur',
+      key: 'docteur',
       render: (text) => (
         <Tag color='blue' icon={<UserOutlined />}>
           {text}
@@ -115,10 +129,20 @@ const ListeConsultation = () => {
     },
     {
       title: 'Type consultation',
-      dataIndex: 'id_typeConsultation',
-      key: 'id_typeConsultation',
+      dataIndex: 'nomConsultation',
+      key: 'nomConsultation',
       render: (text) => (
         <Tag color='blue' icon={<FileTextOutlined />}>
+          {text}
+        </Tag>
+      ),
+    },
+    {
+      title: 'Prix',
+      dataIndex: 'prixConsultation',
+      key: 'prixConsultation',
+      render: (text) => (
+        <Tag color='blue' icon={<DollarOutlined />}>
           {text}
         </Tag>
       ),
@@ -136,36 +160,33 @@ const ListeConsultation = () => {
       ),
     },
     {
-      title: 'Diagnostic',
-      dataIndex: 'diagnostic',
-      key: 'diagnostic',
-      render: (text) => (
-        <Badge
-          color={text === 'Urgent' ? 'red' : 'green'}
-          text={text}
-          icon={<FileTextOutlined />}
-        />
-      ),
-    },
-    {
-      title: 'Notes',
-      dataIndex: 'notes',
-      key: 'notes',
-      render: (text) => (
-        <Badge
-          color={text === 'Urgent' ? 'red' : 'green'}
-          text={text}
-          icon={<FileTextOutlined />}
-        />
-      ),
-    },
-    {
       title: 'Actions',
       key: 'actions',
-      render: () => (
-        <Dropdown overlay={menu} trigger={['click']}>
-          <Button icon={<MoreOutlined />} />
-        </Dropdown>
+      render: (text, record) => (
+        <Space size="middle">
+           <Tooltip title="Voir les détails">
+            <Button
+              icon={<EyeOutlined />}
+              style={{ color: 'blue' }}
+              onClick={() => handleViewDetails(record.id)}
+              aria-label="Voir les détails du client"
+            />
+          </Tooltip>
+          <Tooltip title="Delete">
+            <Popconfirm
+              title="Etes-vous sûr de vouloir supprimer ce département ?"
+              onConfirm={() => handleDelete(record.id)}
+              okText="Oui"
+              cancelText="Non"
+            >
+              <Button
+                icon={<DeleteOutlined />}
+                style={{ color: 'red' }}
+                aria-label="Delete department"
+              />
+            </Popconfirm>
+          </Tooltip>
+        </Space>
       ),
     },
   ];
@@ -198,17 +219,20 @@ const ListeConsultation = () => {
           columns={columns}
           dataSource={filteredData}
           pagination={{ pageSize: 5 }}
-          rowKey="id_docteur"
+          rowKey="id_consultation"
+          size="middle"
         />
       )}
       <Modal
-        title="Ajouter un nouveau docteur"
+        title=""
         visible={isModalVisible}
         onOk={handleOk}
         onCancel={handleCancel}
         footer={null} 
-        width={850}
+        width={650}
+        centered
       >
+        <FicheConsultation id_consultation={idConsult}/>
       </Modal>
     </Card>
   );

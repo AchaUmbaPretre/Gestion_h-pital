@@ -8,6 +8,10 @@ export const getConsultation = async (user) => {
     return axios.get(`${DOMAIN}/api/consultant`);
   };
 
+  export const getConsultationOne = async (id) => {
+    return axios.get(`${DOMAIN}/api/consultant/one?id_consultation=${id}`);
+  };
+
 export const getConsultationType = async (user) => {
     return axios.get(`${DOMAIN}/api/consultant/consult_type`);
   };
