@@ -20,7 +20,7 @@ const Medicament = () => {
     const fetchData = async () => {
       try {
         const response = await getPharma(dateFilter);
-        setDatas(response.data.data);
+        setDatas(response.data);
         setLoading(false);
       } catch (error) {
         notification.error({
@@ -89,8 +89,8 @@ const Medicament = () => {
     { title: '#', dataIndex: 'id', key: 'id', render: (text, record, index) => index + 1 },
     {
       title: 'Nom médicament',
-      dataIndex: 'nomMedicament	',
-      key: 'nomMedicament	',
+      dataIndex: 'nomMedicament',
+      key: 'nomMedicament',
       render: (text) => <Tag color='blue'>{text}</Tag>,
     },
     {

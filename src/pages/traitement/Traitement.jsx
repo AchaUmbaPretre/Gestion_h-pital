@@ -45,11 +45,21 @@ const Traitement = () => {
       render: (text, record, index) => index + 1,
     },
     {
-      title: 'Consultation',
-      dataIndex: 'consultationId',
-      key: 'consultationId',
+      title: 'Patient',
+      dataIndex: 'patient',
+      key: 'patient',
       render: (text) => (
-        <Tag color='blue' icon={<FieldNumberOutlined />}>
+        <Tag color='blue'>
+          {text}
+        </Tag>
+      ),
+    },
+    {
+      title: 'Consultation',
+      dataIndex: 'nomConsultation',
+      key: 'nomConsultation',
+      render: (text) => (
+        <Tag color='blue'>
           {text}
         </Tag>
       ),

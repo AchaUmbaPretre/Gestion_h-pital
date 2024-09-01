@@ -13,6 +13,5 @@ export const getPharmaOne = async (user) => {
   };
 
 export const postPharma = async (data) => {
-  console.log(data)
   return axios.post(`${DOMAIN}/api/pharma`, data);
 };

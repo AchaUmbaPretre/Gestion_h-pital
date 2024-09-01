@@ -1,11 +1,15 @@
-import React from 'react';
-import { Form, Input, InputNumber, Button, Table, Space, Popconfirm } from 'antd';
+import React, { useState } from 'react';
+import { Form, Input, InputNumber, Button, Table, Space, Popconfirm, notification } from 'antd';
 import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
+import { useNavigate } from 'react-router-dom';
+import { postPharma } from '../../../services/pharmaService';
 
 const FormMedicament = () => {
   const [form] = Form.useForm();
-  const [dataSource, setDataSource] = React.useState([]);
-  const [count, setCount] = React.useState(0);
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
+  const [dataSource, setDataSource] = useState([]);
+  const [count, setCount] = useState(0);
 
   const handleAdd = () => {
     const newData = {
@@ -23,28 +27,14 @@ const FormMedicament = () => {
     setDataSource(newData);
   };
 
-  const handleSave = (row) => {
-    const newData = [...dataSource];
-    const index = newData.findIndex((item) => row.key === item.key);
-    if (index > -1) {
-      const item = newData[index];
-      newData.splice(index, 1, {
-        ...item,
-        ...row,
-      });
-      setDataSource(newData);
-    }
-  };
-
   const columns = [
     {
       title: 'Nom du Médicament',
       dataIndex: 'nomMedicament',
       width: '30%',
-      editable: true,
       render: (text, record) => (
         <Form.Item
-          name={`nomMedicament_${record.key}`}
+          name={['medicaments', record.key, 'nomMedicament']}
           rules={[{ required: true, message: 'Veuillez entrer le nom du médicament' }]}
         >
           <Input placeholder="Entrez le nom du médicament" />
@@ -55,9 +45,8 @@ const FormMedicament = () => {
       title: 'Description',
       dataIndex: 'description',
       width: '40%',
-      editable: true,
       render: (text, record) => (
-        <Form.Item name={`description_${record.key}`}>
+        <Form.Item name={['medicaments', record.key, 'description']}>
           <Input.TextArea placeholder="Entrez une description (optionnel)" rows={2} />
         </Form.Item>
       ),
@@ -66,10 +55,9 @@ const FormMedicament = () => {
       title: 'Stock',
       dataIndex: 'stock',
       width: '20%',
-      editable: true,
       render: (text, record) => (
         <Form.Item
-          name={`stock_${record.key}`}
+          name={['medicaments', record.key, 'stock']}
           rules={[{ required: true, message: 'Veuillez entrer le stock disponible' }]}
         >
           <InputNumber min={0} style={{ width: '100%' }} placeholder="Stock" />
@@ -88,9 +76,43 @@ const FormMedicament = () => {
     },
   ];
 
-  const onFinish = (values) => {
-    console.log('Form values:', values);
-    // Traitez les données soumises ici, par exemple les envoyer à une API
+  const onFinish = async (values) => {
+    setIsLoading(true);
+    try {
+      const { medicaments } = values;
+      const filteredMedicaments = dataSource.map((item, index) => ({
+        nomMedicament: medicaments[index]?.nomMedicament || '',
+        description: medicaments[index]?.description || '',
+        stock: medicaments[index]?.stock || 0,
+      }));
+
+      const traitementPromises = filteredMedicaments.map((data) =>
+        postPharma({
+          ...data,
+        })
+      );
+
+      await Promise.all(traitementPromises);
+
+      notification.success({
+        message: 'Succès',
+        description: 'Les informations ont été enregistrées avec succès.',
+      });
+
+      form.resetFields();
+      setDataSource([]);
+      setCount(0);
+      window.location.reload();
+      navigate('/medicament');
+    } catch (error) {
+      console.error('Erreur lors de l\'enregistrement :', error);
+      notification.error({
+        message: 'Erreur',
+        description: 'Une erreur s\'est produite lors de l\'enregistrement des informations.',
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -115,7 +137,7 @@ const FormMedicament = () => {
           )}
         />
         <Form.Item>
-          <Button type="primary" htmlType="submit" style={{ marginTop: '20px', width: '100%' }}>
+          <Button type="primary" htmlType="submit" style={{ marginTop: '20px', width: '100%' }} loading={isLoading}>
             Enregistrer
           </Button>
         </Form.Item>

@@ -1,29 +1,65 @@
 import React, { useState } from 'react';
-import { Form, Input, Button, Select, Space, Table } from 'antd';
+import { Form, Input, Button, Select, Space, Table, notification } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
+import { postTraitement } from '../../../services/traitementService';
+import { useNavigate } from 'react-router-dom';
 
 const { TextArea } = Input;
 const { Option } = Select;
 
-const FormTraitement = ({ onSubmit, initialData }) => {
+const FormTraitement = ({ id_consultation }) => {
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
   const [form] = Form.useForm();
   const [medicaments, setMedicaments] = useState([{ key: 1 }]);
 
   const handleAddRow = () => {
-    const newMedicaments = [...medicaments, { key: medicaments.length + 1 }];
-    setMedicaments(newMedicaments);
+    setMedicaments([...medicaments, { key: medicaments.length + 1 }]);
   };
 
   const handleRemoveRow = (key) => {
     if (medicaments.length > 1) {
-      const newMedicaments = medicaments.filter(item => item.key !== key);
-      setMedicaments(newMedicaments);
+      setMedicaments(medicaments.filter(item => item.key !== key));
     }
   };
 
-  const handleFinish = (values) => {
-    onSubmit(values);
+  const handleFinish = async (values) => {
+    console.log(values); // Vérifiez ici les données avant soumission
+    setIsLoading(true);
+    try {
+      const { medicaments: medicamentsList } = values;
+      
+      // Filtrer les éléments `undefined` ou `null`
+      const filteredMedicaments = medicamentsList.filter(item => item !== undefined && item !== null);
+      
+      const traitementPromises = filteredMedicaments.map(data =>
+        postTraitement({
+          ...data,
+          consultationId: id_consultation,
+        })
+      );
+      await Promise.all(traitementPromises);
+      notification.success({
+        message: 'Succès',
+        description: 'Les informations ont été enregistrées avec succès.',
+      });
+      form.resetFields();
+      setMedicaments([{ key: 1 }]);
+      window.location.reload();
+      navigate('/traitement')
+
+    } catch (error) {
+      console.error("Erreur lors de l'enregistrement :", error);
+      notification.error({
+        message: 'Erreur',
+        description: 'Une erreur s\'est produite lors de l\'enregistrement des informations.',
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
+  
+  
 
   const columns = [
     {
@@ -109,7 +145,6 @@ const FormTraitement = ({ onSubmit, initialData }) => {
       <Form
         form={form}
         layout="vertical"
-        initialValues={initialData}
         onFinish={handleFinish}
       >
         <Table
@@ -130,7 +165,11 @@ const FormTraitement = ({ onSubmit, initialData }) => {
           </Button>
         </Form.Item>
         <Form.Item>
-          <Button type="primary" htmlType="submit">
+          <Button 
+            type="primary" 
+            htmlType="submit" 
+            loading={isLoading}
+          >
             Soumettre
           </Button>
         </Form.Item>

@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Input, Select, Skeleton, Table, Tag, notification, Card, Space, Button, Badge, DatePicker, Dropdown, Menu, Modal, Tooltip, message, Popconfirm } from 'antd';
 import moment from 'moment/moment';
-import { FileOutlined,FilterOutlined,DollarOutlined,DeleteOutlined,EyeOutlined, FilePdfOutlined, UserOutlined, FileTextOutlined, CalendarOutlined, MoreOutlined } from '@ant-design/icons';
+import { FileOutlined,FilterOutlined,PlusOutlined,DollarOutlined,DeleteOutlined,EyeOutlined, FilePdfOutlined, UserOutlined, FileTextOutlined, CalendarOutlined, MoreOutlined } from '@ant-design/icons';
 import * as XLSX from 'xlsx';
 import { getConsultation } from '../../../services/consultservice';
 import FicheConsultation from '../ficheConsultation/FicheConsultation';
+import FormTraitement from '../../traitement/formTraitement/FormTraitement';
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
@@ -15,6 +16,7 @@ const ListeConsultation = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isTraitementVisible, setIsTraitementVisible] = useState(false);
   const [idConsult, setIdConsult] = useState('')
 
 
@@ -67,6 +69,10 @@ const ListeConsultation = () => {
     XLSX.writeFile(wb, 'docteurs_data.xlsx');
   };
 
+  const handleTraitement = (id) => {
+    setIdConsult(id)
+    setIsTraitementVisible(true);
+  };
 
   const handleViewDetails = (id) => {
     setIdConsult(id)
@@ -80,6 +86,7 @@ const ListeConsultation = () => {
 
   const handleCancel = () => {
     setIsModalVisible(false);
+    setIsTraitementVisible(false)
   };
 
   const filteredData = datas?.filter(item =>
@@ -172,6 +179,14 @@ const ListeConsultation = () => {
               aria-label="Voir les détails du client"
             />
           </Tooltip>
+          <Tooltip title="Traitement">
+            <Button
+              icon={<PlusOutlined />}
+              style={{ color: 'blue' }}
+              onClick={() => handleTraitement(record.id)}
+              aria-label=""
+            />
+          </Tooltip>
           <Tooltip title="Delete">
             <Popconfirm
               title="Etes-vous sûr de vouloir supprimer ce département ?"
@@ -233,6 +248,18 @@ const ListeConsultation = () => {
         centered
       >
         <FicheConsultation id_consultation={idConsult}/>
+      </Modal>
+
+      <Modal
+        title=""
+        visible={isTraitementVisible}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        footer={null} 
+        width={1020}
+        centered
+      >
+        <FormTraitement id_consultation={idConsult}/>
       </Modal>
     </Card>
   );
