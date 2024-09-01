@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Input, Select, Skeleton, Table, Tag, notification, Card, Space, Button, Badge, DatePicker, Dropdown, Menu, Modal, Tooltip, message, Popconfirm } from 'antd';
 import moment from 'moment/moment';
-import { FileOutlined,FilterOutlined,PlusOutlined,DollarOutlined,DeleteOutlined,EyeOutlined, FilePdfOutlined, UserOutlined, FileTextOutlined, CalendarOutlined, MoreOutlined } from '@ant-design/icons';
+import { FileOutlined,FilterOutlined,PlusCircleOutlined,DollarOutlined,DeleteOutlined,EyeOutlined, FilePdfOutlined, UserOutlined, FileTextOutlined, CalendarOutlined, MoreOutlined } from '@ant-design/icons';
 import * as XLSX from 'xlsx';
 import { getConsultation } from '../../../services/consultservice';
 import FicheConsultation from '../ficheConsultation/FicheConsultation';
 import FormTraitement from '../../traitement/formTraitement/FormTraitement';
+import FormOrdonnance from '../../ordonnance/formOrdonnance/FormOrdonnance';
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
@@ -17,6 +18,7 @@ const ListeConsultation = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isTraitementVisible, setIsTraitementVisible] = useState(false);
+  const [isOrdonnaceVisible, setIsOrdonnanceVisible] = useState(false);
   const [idConsult, setIdConsult] = useState('')
 
 
@@ -69,6 +71,11 @@ const ListeConsultation = () => {
     XLSX.writeFile(wb, 'docteurs_data.xlsx');
   };
 
+  const handleOrdonnace = (id) => {
+    setIdConsult(id)
+    setIsOrdonnanceVisible(true);
+  };
+
   const handleTraitement = (id) => {
     setIdConsult(id)
     setIsTraitementVisible(true);
@@ -86,6 +93,7 @@ const ListeConsultation = () => {
 
   const handleCancel = () => {
     setIsModalVisible(false);
+    setIsTraitementVisible(false);
     setIsTraitementVisible(false)
   };
 
@@ -181,9 +189,17 @@ const ListeConsultation = () => {
           </Tooltip>
           <Tooltip title="Traitement">
             <Button
-              icon={<PlusOutlined />}
+              icon={<PlusCircleOutlined />}
               style={{ color: 'blue' }}
               onClick={() => handleTraitement(record.id)}
+              aria-label=""
+            />
+          </Tooltip>
+          <Tooltip title="Ordonnance">
+            <Button
+              icon={<FileTextOutlined />}
+              style={{ color: 'blue' }}
+              onClick={() => handleOrdonnace(record.id)}
               aria-label=""
             />
           </Tooltip>
@@ -260,6 +276,18 @@ const ListeConsultation = () => {
         centered
       >
         <FormTraitement id_consultation={idConsult}/>
+      </Modal>
+
+      <Modal
+        title=""
+        visible={isOrdonnaceVisible}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        footer={null} 
+        width={800}
+        centered
+      >
+        <FormOrdonnance id_consultation={idConsult}/>
       </Modal>
     </Card>
   );

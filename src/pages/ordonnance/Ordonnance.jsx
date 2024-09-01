@@ -161,7 +161,7 @@ const Ordonnance = () => {
         onOk={handleOk}
         onCancel={handleCancel}
         footer={null} 
-        width={1000}
+        width={800}
       >
         <FormOrdonnance />
       </Modal>
