@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './patientForm.scss';
 import { Tabs, Modal, notification } from 'antd'; // Importation des composants Ant Design
-import { postPatient } from '../../../services/patientService';
+import { getTypePatient, postPatient } from '../../../services/patientService';
 
 const { TabPane } = Tabs;
 
 const PatientForm = () => {
+  const [type, setType] = useState([]);
   const [formData, setFormData] = useState({
     nom_patient: '',
     prenom: '',
@@ -27,6 +28,26 @@ const PatientForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [activeTab, setActiveTab] = useState('1'); // Suivi de l'onglet actif
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [typeResponse] = await Promise.all([
+          getTypePatient()
+          
+        ]);
+
+        setType(typeResponse.data);
+      } catch (error) {
+        notification.error({
+          message: 'Erreur de chargement',
+          description: 'Une erreur est survenue lors du chargement des données.',
+        });
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -176,25 +197,36 @@ const PatientForm = () => {
                 </select>
                 {errors.groupeSang && <p className="error-message">{errors.groupeSang}</p>}
               </div>
-              {['profession', 'typePatient'].map((field) => (
-                <div className="patient-rows" key={field}>
-                  <label className="patient-label">
-                    {field.charAt(0).toUpperCase() + field.slice(1)}
-                    <span>*</span>
-                  </label>
-                  <input
-                    type="text"
-                    name={field}
-                    className="patient-input"
-                    value={formData[field]}
-                    onChange={handleChange}
-                    placeholder={`Entrez le ${field}....`}
-                  />
-                  {errors[field] && <p className="error-message">{errors[field]}</p>}
-                </div>
-              ))}
+              <div className="patient-rows">
+                <label className="patient-label">Profession <span>*</span></label>
+                <input
+                  type="text"
+                  name="profession"
+                  className="patient-input"
+                  value={formData.profession}
+                  onChange={handleChange}
+                  placeholder="Entrez la profession...."
+                />
+                {errors.profession && <p className="error-message">{errors.profession}</p>}
+              </div>
+              <div className="patient-rows">
+                <label className="patient-label">Type de Patient <span>*</span></label>
+                <select
+                  name="typePatient"
+                  className="patient-input"
+                  value={formData.typePatient}
+                  onChange={handleChange}
+                >
+                  <option value="">Sélectionnez le type de patient</option>
+                  {type.map((tp) => (
+                    <option key={tp.id_typePatient} value={tp.id_typePatient}>{tp.nom_typePatient}</option>
+                  ))}
+                </select>
+                {errors.typePatient && <p className="error-message">{errors.typePatient}</p>}
+              </div>
             </div>
           </TabPane>
+
         </Tabs>
 
         {/* Bouton Enregistrer dans le dernier onglet uniquement */}

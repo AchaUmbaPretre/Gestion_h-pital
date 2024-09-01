@@ -8,6 +8,10 @@ export const getPatient = async () => {
     return axios.get(`${DOMAIN}/api/patient`);
   };
 
+export const getTypePatient = async () => {
+    return axios.get(`${DOMAIN}/api/patient/type`);
+  };
+
 export const getPatientOne = async (id) => {
     return axios.get(`${DOMAIN}/api/patient/One?id_patient=${id}`);
   };

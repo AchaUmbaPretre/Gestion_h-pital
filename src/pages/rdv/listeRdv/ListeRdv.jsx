@@ -95,8 +95,8 @@ const ListeRdv = () => {
     },
     {
       title: 'Patient',
-      dataIndex: 'id_patient',
-      key: 'id_patient',
+      dataIndex: 'nom_patient',
+      key: 'nom_patient',
       render: (text) => (
         <Tag color='blue' icon={<UserOutlined />}>
           {text}
@@ -104,9 +104,9 @@ const ListeRdv = () => {
       ),
     },
     {
-      title: 'Utilisateur',
-      dataIndex: 'id_utilisateur',
-      key: 'id_utilisateur',
+      title: 'Docteur',
+      dataIndex: 'username',
+      key: 'username',
       render: (text) => (
         <Tag color='blue' icon={<UserOutlined />}>
           {text}

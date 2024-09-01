@@ -95,8 +95,8 @@ const Admission = () => {
     },
     {
       title: 'Patient',
-      dataIndex: 'patientId',
-      key: 'patientId',
+      dataIndex: 'nom_patient',
+      key: 'nom_patient',
       render: (text) => (
         <Tag color='blue' icon={<UserOutlined />}>
           {text}
@@ -105,8 +105,8 @@ const Admission = () => {
     },
     {
       title: 'Service',
-      dataIndex: 'serviceId',
-      key: 'serviceId',
+      dataIndex: 'nomService',
+      key: 'nomService',
       render: (text) => (
         <Tag color='blue' icon={<FileTextOutlined />}>
           {text}

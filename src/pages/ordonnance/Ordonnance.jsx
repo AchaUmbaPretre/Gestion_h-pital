@@ -88,9 +88,9 @@ const Ordonnance = () => {
   const columns = [
     { title: '#', dataIndex: 'id', key: 'id', render: (text, record, index) => index + 1 },
     {
-      title: 'consultationId',
+      title: 'Consultation',
       dataIndex: 'consultation',
-      key: 'nomMedicament	',
+      key: 'consultation	',
       render: (text) => <Tag color='blue'>{text}</Tag>,
     },
     {
@@ -137,9 +137,9 @@ const Ordonnance = () => {
           <Dropdown overlay={menu} trigger={['click']}>
             <Button icon={<FilterOutlined />}>Exporter</Button>
           </Dropdown>
-          <Button type="primary" icon={<PlusOutlined />} onClick={showModal}>
+{/*           <Button type="primary" icon={<PlusOutlined />} onClick={showModal}>
             Ajouter un Docteur
-          </Button>
+          </Button> */}
         </Space>
       }
       bordered={false}

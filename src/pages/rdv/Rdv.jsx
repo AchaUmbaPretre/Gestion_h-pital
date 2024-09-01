@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, dateFnsLocalizer } from 'react-big-calendar';
-import { Tabs, Table } from 'antd';
+import { Tabs, Table, notification } from 'antd';
 import format from 'date-fns/format';
 import parse from 'date-fns/parse';
 import startOfWeek from 'date-fns/startOfWeek';
@@ -9,6 +9,7 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import axios from 'axios';
 import './rdv.scss';
 import ListeRdv from './listeRdv/ListeRdv';
+import { getRdv } from '../../services/rdvService';
 
 const { TabPane } = Tabs;
 
@@ -26,27 +27,35 @@ const localizer = dateFnsLocalizer({
 });
 
 const Rdv = () => {
+  const [datas, setDatas] = useState([]);
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios.get('/api/rdv')
-      .then(response => {
-        const formattedEvents = response.data.map(rdv => ({
-          key: rdv.id_rdv,
-          title: rdv.motif_rdv,
-          start: new Date(rdv.date_rdv),
-          end: new Date(new Date(rdv.date_rdv).getTime() + 60 * 60 * 1000), 
-          allDay: false,
-          patient: rdv.patient_name, // Assuming you have patient data
+    const fetchData = async () => {
+      try {
+        const response = await getRdv();
+        const rdvs = response.data;
+
+        // Transformation des données pour le calendrier
+        const events = rdvs.map(rdv => ({
+          title: `${rdv.type_rendezvous} - ${rdv.nom_patient}`,
+          start: new Date(`${rdv.date_rdv.split('T')[0]}T${rdv.heure_debut}`),
+          end: new Date(`${rdv.date_rdv.split('T')[0]}T${rdv.heure_fin}`),
         }));
-        setEvents(formattedEvents);
+
+        setEvents(events);
         setLoading(false);
-      })
-      .catch(error => {
-        console.error('Erreur lors de la récupération des rendez-vous:', error);
+      } catch (error) {
+        notification.error({
+          message: 'Erreur de chargement',
+          description: 'Une erreur est survenue lors du chargement des données.',
+        });
         setLoading(false);
-      });
+      }
+    };
+
+    fetchData();
   }, []);
 
   const columns = [

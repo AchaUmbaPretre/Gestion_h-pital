@@ -94,7 +94,7 @@ const ListeConsultation = () => {
   const handleCancel = () => {
     setIsModalVisible(false);
     setIsTraitementVisible(false);
-    setIsTraitementVisible(false)
+    setIsOrdonnanceVisible(false)
   };
 
   const filteredData = datas?.filter(item =>

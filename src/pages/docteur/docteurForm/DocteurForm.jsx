@@ -35,6 +35,7 @@ const DocteurForm = () => {
       try {
         const [specialiteResponse] = await Promise.all([
           getDocteurSpecialite()
+          
         ]);
 
         setSpeciale(specialiteResponse.data.data);

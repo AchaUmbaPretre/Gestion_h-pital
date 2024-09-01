@@ -111,7 +111,6 @@ const SideBar = () => {
             </Menu.Item>
           </SubMenu>
           <SubMenu key="sub9" icon={<FileTextOutlined />} title="Ordonnance">
-            <Menu.Item key="19">Nouvelle ordonnance</Menu.Item>
             <Menu.Item key="20">
               <Link to='/ordonnance'>
                 Liste des ordonnances

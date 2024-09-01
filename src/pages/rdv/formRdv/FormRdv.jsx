@@ -1,12 +1,39 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Form, Input, DatePicker, TimePicker, Select, Button, Row, Col, notification } from 'antd';
 import { postRdv } from '../../../services/rdvService';
+import { getPatient } from '../../../services/patientService';
+import { getDocteur } from '../../../services/docteurService';
 
 const { TextArea } = Input;
 const { Option } = Select;
 
 const FormRDV = () => {
   const [form] = Form.useForm();
+  const [patient, setPatient] = useState([]);
+  const [docteur, setDocteur] = useState([]);
+
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [patientResponse, docteurResponse] = await Promise.all([
+          getPatient(),
+          getDocteur()
+          
+        ]);
+
+        setPatient(patientResponse.data);
+        setDocteur(docteurResponse.data.data)
+      } catch (error) {
+        notification.error({
+          message: 'Erreur de chargement',
+          description: 'Une erreur est survenue lors du chargement des données.',
+        });
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const onFinish = async(values) => {
     try {
@@ -38,19 +65,31 @@ const FormRDV = () => {
           <Col span={12}>
             <Form.Item
               name="id_patient"
-              label="ID du Patient"
+              label="Patient"
               rules={[{ required: false, message: 'Veuillez entrer l\'ID du patient' }]}
             >
-              <Input placeholder="Entrez l'ID du patient" />
+              <Select placeholder="Sélectionnez un patient">
+                {patient?.map((d) => (
+                  <Option key={d.id_patient} value={d.id_patient}>
+                    {d.nom_patient}
+                  </Option>
+                ))}
+              </Select>
             </Form.Item>
           </Col>
           <Col span={12}>
             <Form.Item
               name="id_utilisateur"
-              label="ID de l'Utilisateur"
+              label="Docteur"
               rules={[{ required: false, message: 'Veuillez entrer l\'ID de l\'utilisateur' }]}
             >
-              <Input placeholder="Entrez l'ID de l'utilisateur" />
+              <Select placeholder="Sélectionnez un docteur">
+                {docteur?.map((d) => (
+                  <Option key={d.id} value={d.id}>
+                    {d.username}
+                  </Option>
+                ))}
+              </Select>
             </Form.Item>
           </Col>
         </Row>
