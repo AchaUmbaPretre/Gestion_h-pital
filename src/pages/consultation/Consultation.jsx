@@ -68,7 +68,7 @@ const Consultation = () => {
       title: 'Prix',
       dataIndex: 'prixConsultation',
       key: 'prixConsultation',
-      render: text => <Tag color='blue'>{text} $</Tag>,
+      render: text => <Tag color='blue'>{text} Fc</Tag>,
     },
     {
       title: 'Crochet',

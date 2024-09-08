@@ -1,0 +1,33 @@
+.patient-card {
+    max-width: 500px;
+    margin: auto;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+  }
+  
+  .header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+  
+    .logo {
+      margin-right: 15px;
+    }
+  
+    .hospital-info {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+  
+  .patient-info {
+    margin-top: 10px;
+  }
+  
+  .footer {
+    margin-top: 20px;
+    text-align: right;
+    font-style: italic;
+  }
+  

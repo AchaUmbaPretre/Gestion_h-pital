@@ -76,6 +76,7 @@ const Factures = () => {
 
   const handleCancel = () => {
     setIsModalVisible(false);
+    setIsDetailVisible(false)
   };
 
   const filteredData = Array.isArray(datas) ? datas.filter(item =>

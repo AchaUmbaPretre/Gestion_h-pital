@@ -28,6 +28,13 @@ const FactureDetail = ({ idFacture }) => {
   }, [idFacture]);
 
   const columns = [
+    { 
+        title: '#', 
+        dataIndex: 'id', 
+        key: 'id', 
+        render: (text, record, index) => index + 1, 
+        width: "3%" 
+      },
     {
       title: 'Type de Service',
       dataIndex: 'service_type',
@@ -42,7 +49,7 @@ const FactureDetail = ({ idFacture }) => {
       title: 'Montant',
       dataIndex: 'montant',
       key: 'montant',
-      render: amount => <Text>${amount}</Text>,
+      render: amount => <Text>{amount} Fc</Text>,
     },
   ];
 

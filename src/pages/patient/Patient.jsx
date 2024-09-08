@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Input, Select, Skeleton, Table, Tag, notification, Button, Space, Card, Badge, DatePicker, Dropdown, Menu, Row, Col, Divider } from 'antd';
+import { Input, Select, Skeleton, Table, Tag, notification, Button, Space, Card, Badge, DatePicker, Dropdown, Menu, Row, Col, Divider, Tooltip, Popconfirm, Modal } from 'antd';
 import { getPatient } from '../../services/patientService';
-import { FileExcelOutlined, FilePdfOutlined, FilterOutlined, UserOutlined, IdcardOutlined, HomeOutlined, PhoneOutlined, MedicineBoxOutlined, CalendarOutlined, MoreOutlined } from '@ant-design/icons';
+import { FileExcelOutlined, FilePdfOutlined, DeleteOutlined, EyeOutlined, FilterOutlined, UserOutlined, IdcardOutlined, HomeOutlined, PhoneOutlined, MedicineBoxOutlined, CalendarOutlined, MoreOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import { saveAs } from 'file-saver';
 import * as XLSX from 'xlsx';
+import PatientDetail from './patientDetail/PatientDetail';
 
 const { RangePicker } = DatePicker;
 const { Option } = Select;
@@ -12,9 +13,12 @@ const { Option } = Select;
 const Patient = () => {
   const [datas, setDatas] = useState([]);
   const [dateRange, setDateRange] = useState([]);
+  const [idPatient, setIdPatient] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedType, setSelectedType] = useState('all');
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -36,6 +40,15 @@ const Patient = () => {
 
   const handleSearch = (value) => {
     setSearchTerm(value.toLowerCase());
+  };
+
+  const showModal = (id) => {
+    setIsModalVisible(true);
+    setIdPatient(id)
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
   };
 
   const handleDateChange = (dates) => {
@@ -174,10 +187,31 @@ const Patient = () => {
     {
       title: 'Actions',
       key: 'actions',
-      render: () => (
-        <Dropdown overlay={menu} trigger={['click']}>
-          <Button icon={<MoreOutlined />} />
-        </Dropdown>
+      render: (text, record) => (
+        <Space size="middle">
+           <Tooltip title="Voir le detail">
+            <Button
+              icon={<EyeOutlined />}
+              style={{ color: 'blue' }}
+              aria-label=""
+              onClick={()=> showModal(record.id_patient)}
+            />
+          </Tooltip>
+          <Tooltip title="Delete">
+            <Popconfirm
+              title="Etes-vous sûr de vouloir supprimer ce département ?"
+/*               onConfirm={() => handleDelete(record.id)} */
+              okText="Oui"
+              cancelText="Non"
+            >
+              <Button
+                icon={<DeleteOutlined />}
+                style={{ color: 'red' }}
+                aria-label="Delete department"
+              />
+            </Popconfirm>
+          </Tooltip>
+        </Space>
       ),
     },
   ];
@@ -218,7 +252,20 @@ const Patient = () => {
           rowKey="id"
         />
       )}
+
+      <Modal
+        title=""
+        visible={isModalVisible}
+        onCancel={handleCancel}
+        footer={null} 
+        width={600}
+        centered
+      >
+        <PatientDetail idPatient={idPatient} />
+      </Modal>
     </Card>
+
+    
   );
 };
 
