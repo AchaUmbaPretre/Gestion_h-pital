@@ -12,6 +12,11 @@ export const getFactureService = async (type) => {
     return axios.get(`${DOMAIN}/api/factures/services?type=${type}`);
   };
 
+export const getFactureDetail = async (id) => {
+    return axios.get(`${DOMAIN}/api/factures/one?id=${id}`);
+  };
+
+
 export const postFacture = async (data) => {
   return axios.post(`${DOMAIN}/api/factures`, data);
 };

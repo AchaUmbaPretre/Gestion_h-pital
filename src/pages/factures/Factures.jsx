@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Input, Select, Skeleton, Table, Tag, notification, Card, Space, Button, Badge, DatePicker, Dropdown, Menu, Modal } from 'antd';
+import { Input, Select, Skeleton, Table, Tag, notification, Card, Space, Button, Badge, DatePicker, Dropdown, Menu, Modal, Tooltip, Popconfirm } from 'antd';
 import moment from 'moment/moment';
-import { FileExcelOutlined, FilePdfOutlined, CalendarOutlined, MoreOutlined, FilterOutlined, PlusOutlined } from '@ant-design/icons';
+import { FileExcelOutlined,EyeOutlined,DeleteOutlined,UserOutlined, FilePdfOutlined, CalendarOutlined, MoreOutlined, FilterOutlined, PlusOutlined } from '@ant-design/icons';
 import * as XLSX from 'xlsx';
-import { getPharma } from '../../services/pharmaService';
 import FormFactures from './formFactures/FormFactures';
+import { getFacture } from '../../services/facturesService';
+import FactureDetail from './factureDetail/FactureDetail';
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
@@ -14,13 +15,15 @@ const Factures = () => {
   const [dateFilter, setDateFilter] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [idFacture, setIdFacture] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isDetailVisible, setIsDetailVisible] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await getPharma(dateFilter);
-        setDatas(response.data.data);
+        const response = await getFacture(dateFilter);
+        setDatas(response.data);
         setLoading(false);
       } catch (error) {
         notification.error({
@@ -57,12 +60,18 @@ const Factures = () => {
     });
   };
 
+  const showModalDetail = (id) => {
+    setIdFacture(id)
+    setIsDetailVisible(true)
+  }
+
   const showModal = () => {
     setIsModalVisible(true);
   };
 
   const handleOk = () => {
     setIsModalVisible(false);
+    setIsDetailVisible(false)
   };
 
   const handleCancel = () => {
@@ -70,7 +79,7 @@ const Factures = () => {
   };
 
   const filteredData = Array.isArray(datas) ? datas.filter(item =>
-    item.nomMedicament.toLowerCase().includes(searchTerm)
+    item.nom_patient.toLowerCase().includes(searchTerm)
   ) : [];
   
 
@@ -89,27 +98,34 @@ const Factures = () => {
     { title: '#', dataIndex: 'id', key: 'id', render: (text, record, index) => index + 1 },
     {
       title: 'Patient',
-      dataIndex: 'patient',
+      dataIndex: 'nom_patient',
       key: 'patient',
-      render: (text) => <Tag color='blue'>{text}</Tag>,
+      render: (text) => <Tag color='blue' icon={<UserOutlined />}>{text}</Tag>,
     },
     {
       title: 'date Emission',
       dataIndex: 'date_emission',
       key: 'date_emission',
-      render: (text) => <Tag color='blue'>{text}</Tag>,
+      render: (text) => (
+        <Tag color='blue' icon={<CalendarOutlined />}>
+          {moment(text).format('DD-MM-YYYY')}
+        </Tag>
+      )
     },
     {
       title: 'Date limite',
       dataIndex: 'date_limite',
       key: 'date_limite',
-      render: (text) => <Tag color='blue'>{text}</Tag>,
-    },
+      render: (text) => (
+        <Tag color='blue' icon={<CalendarOutlined />}>
+          {moment(text).format('DD-MM-YYYY')}
+        </Tag>
+      )    },
     {
         title: 'Montant total',
         dataIndex: 'montant_total',
         key: 'montant_total',
-        render: (text) => <Tag color='blue'>{text}</Tag>,
+        render: (text) => <Tag color='blue'>{text} Fc</Tag>,
       },
       {
         title: 'Status',
@@ -117,21 +133,42 @@ const Factures = () => {
         key: 'status',
         render: (text) => <Tag color='blue'>{text}</Tag>,
       },
-    {
-      title: 'Actions',
-      key: 'actions',
-      render: () => (
-        <Dropdown overlay={menu} trigger={['click']}>
-          <Button icon={<MoreOutlined />} />
-        </Dropdown>
-      ),
-    },
+      {
+        title: 'Actions',
+        key: 'actions',
+        render: (text, record) => (
+          <Space size="middle">
+             <Tooltip title="Voir le détail">
+              <Button
+                icon={<EyeOutlined />}
+                style={{ color: 'blue' }}
+                aria-label=""
+                onClick={()=> showModalDetail(record.id_facture)}
+              />
+            </Tooltip>
+            <Tooltip title="Delete">
+              <Popconfirm
+                title="Etes-vous sûr de vouloir supprimer ce département ?"
+  /*               onConfirm={() => handleDelete(record.id)} */
+                okText="Oui"
+                cancelText="Non"
+              >
+                <Button
+                  icon={<DeleteOutlined />}
+                  style={{ color: 'red' }}
+                  aria-label="Delete department"
+                />
+              </Popconfirm>
+            </Tooltip>
+          </Space>
+        ),
+      },
   ];
 
   return (
     <Card
       style={{padding:"20px 0px"}}
-      title="Liste d'ordonnance"
+      title="Liste des factures"
       extra={
         <Space size="middle">
           <RangePicker onChange={handleDateFilterChange} />
@@ -170,6 +207,16 @@ const Factures = () => {
         width={1000}
       >
         <FormFactures />
+      </Modal>
+
+      <Modal
+        title="Factures"
+        visible={isDetailVisible}
+        onCancel={handleCancel}
+        footer={null} 
+        width={700}
+      >
+        <FactureDetail idFacture={idFacture}/>
       </Modal>
     </Card>
   );

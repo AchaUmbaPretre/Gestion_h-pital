@@ -105,8 +105,8 @@ const FactureForm = () => {
         service_details: serviceDetails,
       });
       message.success('Facture soumise avec succès!');
-      window.location.reload();
-
+/*       window.location.reload();
+ */
     } catch (error) {
       message.error('Erreur lors de la soumission de la facture.');
     } finally {

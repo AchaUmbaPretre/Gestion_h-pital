@@ -1,0 +1,70 @@
+.facture-detail {
+    padding: 24px;
+    background: #f0f2f5;
+  
+    .print-button {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 16px;
+    }
+  
+    .facture-content {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+  
+      .header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+  
+        .logo {
+          margin-right: 20px;
+  
+          .hospital-logo {
+            width: 80px;
+            height: 80px;
+            background-color: #0073e6;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 32px;
+            font-weight: bold;
+          }
+        }
+  
+        .hospital-info {
+          display: flex;
+          flex-direction: column;
+  
+          h2 {
+            margin: 0;
+            color: #1890ff;
+          }
+        }
+      }
+  
+      .facture-card {
+        margin-bottom: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  
+        .total-section {
+          background-color: #f6f6f6;
+          text-align: right;
+          padding: 16px;
+          border-top: 1px solid #ddd;
+        }
+      }
+  
+      .footer {
+        margin-top: 40px;
+        text-align: center;
+        font-size: 14px;
+        color: #888;
+      }
+    }
+  }
+  
