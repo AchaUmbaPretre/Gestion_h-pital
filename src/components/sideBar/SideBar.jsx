@@ -137,13 +137,8 @@ const SideBar = () => {
             </Menu.Item>
           </SubMenu>
           <SubMenu key="sub13" icon={<CreditCardOutlined />} title="Facturation">
-            <Menu.Item key="28">
-              <Link to='/creer_facture'>
-                Créer une facture
-              </Link>
-            </Menu.Item>
             <Menu.Item key="29">
-              <Link to='/liste_facture'>
+              <Link to='/factures'>
                 Liste des factures
               </Link>
             </Menu.Item>

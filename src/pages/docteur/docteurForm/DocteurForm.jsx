@@ -1,163 +1,159 @@
-import React, { useEffect, useState } from 'react'; 
-import { Modal, notification, Select } from 'antd';
-import './docteurForm.scss';
+import React, { useEffect, useState } from 'react';
+import { Form, Input, Button, Select, Row, Col, notification, Modal } from 'antd';
 import { getDocteurSpecialite, postDocteur } from '../../../services/docteurService';
 import { useNavigate } from 'react-router-dom';
+import './docteurForm.scss';
 
 const DocteurForm = () => {
+  const [form] = Form.useForm();
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    username: '',
-    prenom: '',
-    specialite: '',
-    phone_number: '',
-    email: '',
-    adresse: '',
-    img: null,
-  });
-  const [speciale, setSpeciale] = useState([]);
-  const [errors, setErrors] = useState({});
+  const [specialites, setSpecialites] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
-  // Gestion des changements dans le formulaire
-  const handleChange = (e) => {
-    const { name, value, type, files } = e.target;
-    if (type === 'file') {
-      setFormData(prevData => ({ ...prevData, [name]: files[0] }));
-    } else {
-      setFormData(prevData => ({ ...prevData, [name]: value }));
-    }
-  };
-
+  // Récupérer les spécialités
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [specialiteResponse] = await Promise.all([
-          getDocteurSpecialite()
-          
-        ]);
-
-        setSpeciale(specialiteResponse.data.data);
+        const specialiteResponse = await getDocteurSpecialite();
+        setSpecialites(specialiteResponse?.data.data);
       } catch (error) {
         notification.error({
           message: 'Erreur de chargement',
-          description: 'Une erreur est survenue lors du chargement des données.',
+          description: 'Impossible de charger les spécialités.',
         });
       }
     };
-
     fetchData();
   }, []);
 
-  const validate = () => {
-    let tempErrors = {};
-    for (const field in formData) {
-      if (!formData[field] && field !== 'img') {
-        tempErrors[field] = 'Ce champ est requis';
-      }
-    }
-    setErrors(tempErrors);
-    return Object.keys(tempErrors).length === 0;
-  };
-
-  const handleSubmit = async () => {
-    if (!validate()) return;
+  // Soumettre le formulaire
+  const handleSubmit = async (values) => {
     setIsLoading(true);
     try {
-      const formDataToSend = new FormData();
-      Object.keys(formData).forEach(key => {
-        formDataToSend.append(key, formData[key]);
-      });
-      await postDocteur(formData);
+      // Envoyer les données
+      await postDocteur(values);
+
       notification.success({
         message: 'Succès',
         description: 'Les informations ont été enregistrées avec succès.',
       });
       navigate('/liste_docteur');
-      setIsModalVisible(false); // Fermer le modal après succès
+      setIsModalVisible(false); // Fermer le modal
+      window.location.reload();
     } catch (error) {
-      console.error("Erreur lors de se connecter:", error);
       notification.error({
         message: 'Erreur',
-        description: 'Une erreur s\'est produite lors de l\'enregistrement des informations.',
+        description: "Une erreur s'est produite lors de l'enregistrement.",
       });
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Afficher le modal
-  const showModal = () => setIsModalVisible(true);
-  // Masquer le modal
-  const handleCancel = () => setIsModalVisible(false);
-  // Confirmer la soumission
-  const handleOk = () => {
-    handleSubmit(); // Soumettre le formulaire après confirmation
+  // Afficher le modal de confirmation
+  const showModal = () => {
+    form.validateFields()
+      .then(() => setIsModalVisible(true))
+      .catch(() => notification.error({ message: 'Erreur', description: 'Veuillez corriger les erreurs avant de continuer.' }));
   };
 
-  return (
-    <>
-      <div className="docteurForm">
-        <h2 className="docteur-h2">Docteur</h2>
-        <div className="docteurForm-wrapper">
-          {['username', 'prenom', 'phone_number', 'email', 'adresse'].map(field => (
-            <div className="docteur-rows" key={field}>
-              <label htmlFor={field} className="docteur-label">{field.charAt(0).toUpperCase() + field.slice(1)}</label>
-              <input
-                type="text"
-                id={field}
-                name={field}
-                value={formData[field]}
-                onChange={handleChange}
-                className="docteur-input"
-              />
-              {errors[field] && <span className="error-text">{errors[field]}</span>}
-            </div>
-          ))}
-          <div className="docteur-rows">
-            <label htmlFor="specialite" className="docteur-label">Specialité</label>
-            <Select
-              name="specialite"
-              options={speciale?.map(item => ({
-                value: item.id_specialite,
-                label: item.nom_specialite,
-              }))}
-              placeholder="Sélectionnez une specialité..."
-              onChange={(selectedOption) => setFormData((prev) => ({ ...prev, specialite: selectedOption.value }))}
-            />
-          </div>
-          <div className="docteur-rows">
-            <label htmlFor="img" className="docteur-label">Image</label>
-            <input
-              type="file"
-              id="img"
-              name="img"
-              onChange={handleChange}
-              className="docteur-input"
-            />
-          </div>
-        </div>
-        <button 
-          className="docteur-btn"
-          type="button"
-          onClick={showModal}
-          disabled={isLoading}
-        >
-          {isLoading ? 'Enregistrement...' : 'Enregistrer'}
-        </button>
+  const handleOk = () => form.submit();
+  const handleCancel = () => setIsModalVisible(false);
 
-        <Modal
-          title="Confirmation"
-          visible={isModalVisible}
-          onOk={handleOk}
-          onCancel={handleCancel}
-          confirmLoading={isLoading}
-        >
-          <p>Êtes-vous sûr de vouloir enregistrer ces informations ?</p>
-        </Modal>
-      </div>
-    </>
+  return (
+    <div className="docteurForm">
+      <Form
+        form={form}
+        layout="vertical"
+        onFinish={handleSubmit}
+        initialValues={{ specialite: '', phone_number: '' }}
+      >
+        <Row gutter={24}>
+          <Col span={12}>
+            <Form.Item
+              label="Nom d'utilisateur"
+              name="username"
+              rules={[{ required: true, message: 'Veuillez entrer le nom d\'utilisateur' }]}
+            >
+              <Input placeholder="Nom d'utilisateur" />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item
+              label="Prénom"
+              name="prenom"
+              rules={[{ required: true, message: 'Veuillez entrer le prénom' }]}
+            >
+              <Input placeholder="Prénom" />
+            </Form.Item>
+          </Col>
+        </Row>
+
+        <Row gutter={24}>
+          <Col span={12}>
+            <Form.Item
+              label="Numéro de téléphone"
+              name="phone_number"
+              rules={[{ required: true, message: 'Veuillez entrer le numéro de téléphone' }]}
+            >
+              <Input placeholder="Numéro de téléphone" />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item
+              label="Email"
+              name="email"
+              rules={[{ required: true, type: 'email', message: 'Veuillez entrer un email valide' }]}
+            >
+              <Input placeholder="Email" />
+            </Form.Item>
+          </Col>
+        </Row>
+
+        <Row gutter={24}>
+          <Col span={12}>
+            <Form.Item
+              label="Adresse"
+              name="adresse"
+              rules={[{ required: true, message: 'Veuillez entrer l\'adresse' }]}
+            >
+              <Input placeholder="Adresse" />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item
+              label="Spécialité"
+              name="specialite"
+              rules={[{ required: true, message: 'Veuillez sélectionner une spécialité' }]}
+            >
+              <Select
+                placeholder="Sélectionnez une spécialité"
+                options={specialites?.map((specialite) => ({
+                  label: specialite.nom_specialite,
+                  value: specialite.id_specialite,
+                }))}
+              />
+            </Form.Item>
+          </Col>
+        </Row>
+
+        <Form.Item>
+          <Button type="primary" onClick={showModal} loading={isLoading}>
+            {isLoading ? 'Enregistrement...' : 'Enregistrer'}
+          </Button>
+        </Form.Item>
+      </Form>
+      <Modal
+        title="Confirmation"
+        visible={isModalVisible}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        confirmLoading={isLoading}
+      >
+        <p>Êtes-vous sûr de vouloir enregistrer ces informations ?</p>
+      </Modal>
+    </div>
   );
 };
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     UserOutlined,
     ArrowRightOutlined,
@@ -22,6 +22,10 @@ import {
     Legend,
 } from 'chart.js';
 import './statistique.scss';
+import { getPatientCount } from '../../services/patientService';
+import { notification } from 'antd';
+import { getDocteurCount } from '../../services/docteurService';
+import { getConsultationCount } from '../../services/consultservice';
 
 // Enregistrer les composants de Chart.js
 ChartJS.register(
@@ -35,6 +39,10 @@ ChartJS.register(
 );
 
 const Statistique = () => {
+  const [patient, setPatient] = useState([]);
+  const [docteur, setDocteur] = useState([]);
+  const [consultation, setConsultation] = useState([]);
+
   const data = {
     labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
     datasets: [
@@ -61,6 +69,34 @@ const Statistique = () => {
     },
   };
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [ patientResponse, docteurResponse, consultationResponse ] = await Promise.all([
+          getPatientCount(),
+          getDocteurCount(),
+          getConsultationCount()
+        ]);
+
+        setPatient(patientResponse?.data[0].nbre_patient);
+        setDocteur(docteurResponse?.data[0].nbre_docteur);
+        setConsultation(consultationResponse.data[0].nbre_consultation)
+
+
+      } catch (error) {
+        notification.error({
+          message: 'Erreur de chargement',
+          description: 'Une erreur est survenue lors du chargement des données.',
+        });
+      } finally {
+/*         setLoading(false); */
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  console.log(docteur)
   return (
     <>
       <div className="statistique">
@@ -97,7 +133,7 @@ const Statistique = () => {
                 </div>
               </div>
               <div className="statistique-row-center">
-                <h2 className="stat-h2">1000</h2>
+                <h2 className="stat-h2">{patient}</h2>
                 <div className="statistique-row-center-top">
                   <span className="statistique-count"><RiseOutlined className='icon'/>1000</span>
                   <span className="statistique-count-desc">+10</span>
@@ -124,7 +160,7 @@ const Statistique = () => {
                 </div>
               </div>
               <div className="statistique-row-center">
-                <h2 className="stat-h2">1000</h2>
+                <h2 className="stat-h2">{docteur}</h2>
                 <div className="statistique-row-center-top">
                   <span className="statistique-count"><RiseOutlined className='icon'/>1000</span>
                   <span className="statistique-count-desc">+10</span>
@@ -151,7 +187,7 @@ const Statistique = () => {
                 </div>
               </div>
               <div className="statistique-row-center">
-                <h2 className="stat-h2">1000</h2>
+                <h2 className="stat-h2">{consultation}</h2>
                 <div className="statistique-row-center-top">
                   <span className="statistique-count"><RiseOutlined className='icon'/>000</span>
                   <span className="statistique-count-desc">+10</span>
@@ -178,7 +214,7 @@ const Statistique = () => {
                 </div>
               </div>
               <div className="statistique-row-center">
-                <h2 className="stat-h2">1000</h2>
+                <h2 className="stat-h2">50</h2>
                 <div className="statistique-row-center-top">
                   <span className="statistique-count"><RiseOutlined className='icon'/>1000%</span>
                   <span className="statistique-count-desc">+10</span>

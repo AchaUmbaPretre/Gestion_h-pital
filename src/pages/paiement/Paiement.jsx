@@ -125,7 +125,7 @@ const Paiement = () => {
   return (
     <Card
       style={{padding:"20px 0px"}}
-      title="Liste d'ordonnance"
+      title="Liste des paiements"
       extra={
         <Space size="middle">
           <RangePicker onChange={handleDateFilterChange} />
@@ -138,7 +138,7 @@ const Paiement = () => {
             <Button icon={<FilterOutlined />}>Exporter</Button>
           </Dropdown>
           <Button type="primary" icon={<PlusOutlined />} onClick={showModal}>
-            Ajouter un Docteur
+            Ajouter un Paiement
           </Button>
         </Space>
       }
@@ -156,7 +156,7 @@ const Paiement = () => {
         />
       )}
       <Modal
-        title="Ajouter un médicament"
+        title="Ajouter un paiement"
         visible={isModalVisible}
         onOk={handleOk}
         onCancel={handleCancel}

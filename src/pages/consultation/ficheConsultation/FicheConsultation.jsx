@@ -46,13 +46,40 @@ const FicheConsultation = ({ id_consultation }) => {
                 }}
                 hoverable
             >
+                {/* Header with logo on the left and hospital name on the right */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
+            {/* Logo de l'hôpital */}
+                <div
+                style={{
+                    width: '50px',
+                    height: '50px',
+                    backgroundColor: '#0073e6',
+                    borderRadius: '50%',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    color: '#fff',
+                    fontSize: '24px',
+                    fontWeight: 'bold',
+                }}
+                >
+                H
+                </div>
+
+                {/* Nom de l'hôpital */}
+                <div style={{ textAlign: 'right', flexGrow: 1 }}>
+                <Title level={4} style={{ margin: 0 }}>Hôpital Général de Ndjili</Title>
+                <Text>Adresse: Rue de l'Hôpital, Ndjili</Text>
+                </div>
+                </div>
+
                 <Title
                     level={3}
                     style={{
                         textAlign: 'center',
                         marginBottom: '30px',
                         color: '#1890ff',
-                        fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif"
+                        fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
                     }}
                 >
                     Fiche de Consultation

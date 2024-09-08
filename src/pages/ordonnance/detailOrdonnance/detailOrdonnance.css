@@ -1,0 +1,24 @@
+@media print {
+    .ant-btn {
+      display: none;
+    }
+  
+    .ant-table {
+      page-break-inside: avoid;
+    }
+  
+    .ant-typography-title, .ant-typography-text {
+      text-align: center;
+    }
+  
+    body {
+      margin: 0;
+      padding: 0;
+      color: #000;
+    }
+  
+    @page {
+      margin: 1cm;
+    }
+  }
+  

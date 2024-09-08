@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { Input, Select, Skeleton, Table, Tag, notification, Card, Space, Button, Badge, DatePicker, Dropdown, Menu, Modal } from 'antd';
+import { Input, Select, Skeleton, Table, Tag, notification, Card, Space, Button, Badge, DatePicker, Dropdown, Menu, Modal, Tooltip, Popconfirm } from 'antd';
 import moment from 'moment/moment';
-import { FileExcelOutlined, FilePdfOutlined, CalendarOutlined, MoreOutlined, FilterOutlined, PlusOutlined } from '@ant-design/icons';
+import { FileExcelOutlined, EyeOutlined, DeleteOutlined, FilePdfOutlined, CalendarOutlined, MoreOutlined, FilterOutlined, PlusOutlined } from '@ant-design/icons';
 import * as XLSX from 'xlsx';
 import { getPharma } from '../../services/pharmaService';
 import FormOrdonnance from './formOrdonnance/FormOrdonnance';
+import { getOrdonnance } from '../../services/ordonnanceService';
+import DetailOrdonnance from './detailOrdonnance/DetailOrdonnance';
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 
 const Ordonnance = () => {
   const [datas, setDatas] = useState([]);
+  const [idConsultation, setIdconsultation] = useState([]);
   const [dateFilter, setDateFilter] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -19,8 +22,8 @@ const Ordonnance = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await getPharma(dateFilter);
-        setDatas(response.data.data);
+        const response = await getOrdonnance(dateFilter);
+        setDatas(response.data);
         setLoading(false);
       } catch (error) {
         notification.error({
@@ -57,8 +60,9 @@ const Ordonnance = () => {
     });
   };
 
-  const showModal = () => {
+  const showModal = (id) => {
     setIsModalVisible(true);
+    setIdconsultation(id)
   };
 
   const handleOk = () => {
@@ -88,15 +92,15 @@ const Ordonnance = () => {
   const columns = [
     { title: '#', dataIndex: 'id', key: 'id', render: (text, record, index) => index + 1 },
     {
-      title: 'Consultation',
-      dataIndex: 'consultation',
-      key: 'consultation	',
+      title: 'Consultation N°',
+      dataIndex: 'id',
+      key: 'id',
       render: (text) => <Tag color='blue'>{text}</Tag>,
     },
     {
       title: 'Medicament',
-      dataIndex: 'medicamentId',
-      key: 'description',
+      dataIndex: 'nomMedicament',
+      key: 'nomMedicament',
       render: (text) => <Tag color='blue'>{text}</Tag>,
     },
     {
@@ -109,15 +113,40 @@ const Ordonnance = () => {
       title: 'Date',
       dataIndex: 'dateOrdre',
       key: 'stock',
-      render: (text) => <Tag color='blue'>{text}</Tag>,
+      render: (text) => (
+        <Tag color='blue' icon={<CalendarOutlined />}>
+          {moment(text).format('DD-MM-YYYY')}
+        </Tag>
+      )
     },
     {
       title: 'Actions',
       key: 'actions',
-      render: () => (
-        <Dropdown overlay={menu} trigger={['click']}>
-          <Button icon={<MoreOutlined />} />
-        </Dropdown>
+      render: (text, record) => (
+        <Space size="middle">
+           <Tooltip title="Voir l'ordonnace">
+            <Button
+              icon={<EyeOutlined />}
+              style={{ color: 'blue' }}
+              aria-label="Creer une ordonnance"
+              onClick={()=> showModal(record.id)}
+            />
+          </Tooltip>
+          <Tooltip title="Delete">
+            <Popconfirm
+              title="Etes-vous sûr de vouloir supprimer ce département ?"
+/*               onConfirm={() => handleDelete(record.id)} */
+              okText="Oui"
+              cancelText="Non"
+            >
+              <Button
+                icon={<DeleteOutlined />}
+                style={{ color: 'red' }}
+                aria-label="Delete department"
+              />
+            </Popconfirm>
+          </Tooltip>
+        </Space>
       ),
     },
   ];
@@ -156,14 +185,15 @@ const Ordonnance = () => {
         />
       )}
       <Modal
-        title="Ajouter un médicament"
+        title=""
         visible={isModalVisible}
         onOk={handleOk}
         onCancel={handleCancel}
         footer={null} 
-        width={800}
+        width={700}
+        centered
       >
-        <FormOrdonnance />
+        <DetailOrdonnance idConsultation={idConsultation} />
       </Modal>
     </Card>
   );

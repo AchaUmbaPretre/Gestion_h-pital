@@ -1,22 +1,25 @@
 import './listeDocteur.scss';
 import React, { useState, useEffect } from 'react';
-import { Input, Select, Skeleton, Table, Tag, notification, Card, Space, Button, Badge, DatePicker, Dropdown, Menu, Modal } from 'antd';
+import { Input, Select, Skeleton, Table, Tag, notification, Card, Space, Button, Badge, DatePicker, Dropdown, Menu, Modal, Tooltip } from 'antd';
 import moment from 'moment/moment';
 import { getDocteur } from '../../../services/docteurService';
-import { FileExcelOutlined, FilePdfOutlined, FilterOutlined, PlusOutlined, UserOutlined, IdcardOutlined, HomeOutlined, PhoneOutlined, MedicineBoxOutlined, BranchesOutlined, MoreOutlined } from '@ant-design/icons';
+import { FileExcelOutlined,EyeOutlined, FilePdfOutlined, FilterOutlined, PlusOutlined, UserOutlined, IdcardOutlined, HomeOutlined, PhoneOutlined, MedicineBoxOutlined, BranchesOutlined, MoreOutlined } from '@ant-design/icons';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import DocteurForm from '../docteurForm/DocteurForm';
+import DocteurCarte from '../docteurCarte/DocteurCarte';
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 
 const ListeDocteur = () => {
   const [datas, setDatas] = useState([]);
+  const [docteur, setDocteur] = useState('');
   const [dateFilter, setDateFilter] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -59,6 +62,11 @@ const ListeDocteur = () => {
     });
   };
 
+  const showModalCarte = (id) => {
+    setIsVisible(true);
+    setDocteur(id)
+  };
+
   const showModal = () => {
     setIsModalVisible(true);
   };
@@ -69,6 +77,7 @@ const ListeDocteur = () => {
 
   const handleCancel = () => {
     setIsModalVisible(false);
+    setIsVisible(false)
   };
 
   const filteredData = datas.filter(item =>
@@ -128,8 +137,8 @@ const ListeDocteur = () => {
     },
     {
       title: 'Téléphone',
-      dataIndex: 'phone_numbe',
-      key: 'phone_numbe',
+      dataIndex: 'phone_number',
+      key: 'phone_number',
       render: (text) => (
         <Tag color='blue' icon={<PhoneOutlined />}>
           {text || 'Aucun'}
@@ -138,8 +147,8 @@ const ListeDocteur = () => {
     },
     {
       title: 'Specialité',
-      dataIndex: 'specialite',
-      key: 'specialite',
+      dataIndex: 'nom_specialite',
+      key: 'nom_specialite',
       render: (text) => (
         <Badge
           color={text === 'Urgent' ? 'red' : 'green'}
@@ -148,7 +157,7 @@ const ListeDocteur = () => {
         />
       ),
     },
-    {
+/*     {
       title: 'Département',
       dataIndex: 'departement',
       key: 'departement',
@@ -159,14 +168,21 @@ const ListeDocteur = () => {
           icon={<BranchesOutlined />}
         />
       ),
-    },
+    }, */
     {
       title: 'Actions',
       key: 'actions',
-      render: () => (
-        <Dropdown overlay={menu} trigger={['click']}>
-          <Button icon={<MoreOutlined />} />
-        </Dropdown>
+      render: (text, record) => (
+        <Space size="middle">
+          <Tooltip title="Generer une carte">
+            <Button
+              icon={<EyeOutlined />}
+              style={{ color: 'blue' }}
+              aria-label="Generer une carte"
+              onClick={()=> showModalCarte(record.id)}
+            />
+          </Tooltip>
+        </Space>
       ),
     },
   ];
@@ -215,6 +231,16 @@ const ListeDocteur = () => {
         width={850}
       >
         <DocteurForm />
+      </Modal>
+
+      <Modal
+        title="Carte"
+        visible={isVisible}
+        onCancel={handleCancel}
+        footer={null} 
+        width={700}
+      >
+        <DocteurCarte idDocteur={docteur} />
       </Modal>
     </Card>
   );

@@ -66,8 +66,8 @@ const Traitement = () => {
     },
     {
       title: 'Medicament',
-      dataIndex: 'medicament',
-      key: 'medicament',
+      dataIndex: 'nomMedicament',
+      key: 'nomMedicament',
       render: (text) => (
         <Tag color='blue' icon={<MedicineBoxOutlined />}>
           {text}
@@ -79,7 +79,7 @@ const Traitement = () => {
       dataIndex: 'dose',
       key: 'dose',
       render: (text) => (
-        <Tag color='blue' icon={<FieldNumberOutlined />}>
+        <Tag color='blue'>
           {text}
         </Tag>
       ),

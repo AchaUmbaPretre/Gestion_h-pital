@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Form, Input, Button, Select, Space, Table, notification } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { postTraitement } from '../../../services/traitementService';
 import { useNavigate } from 'react-router-dom';
+import { getPharma } from '../../../services/pharmaService';
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -12,6 +13,23 @@ const FormTraitement = ({ id_consultation }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [form] = Form.useForm();
   const [medicaments, setMedicaments] = useState([{ key: 1 }]);
+  const [medicament, setMedicament] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await getPharma();
+        setMedicament(response.data);
+      } catch (error) {
+        notification.error({
+          message: 'Erreur de chargement',
+          description: 'Une erreur est survenue lors du chargement des données.',
+        });
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const handleAddRow = () => {
     setMedicaments([...medicaments, { key: medicaments.length + 1 }]);
@@ -45,8 +63,9 @@ const FormTraitement = ({ id_consultation }) => {
       });
       form.resetFields();
       setMedicaments([{ key: 1 }]);
-      window.location.reload();
       navigate('/traitement')
+      window.location.reload();
+
 
     } catch (error) {
       console.error("Erreur lors de l'enregistrement :", error);
@@ -64,21 +83,22 @@ const FormTraitement = ({ id_consultation }) => {
   const columns = [
     {
       title: 'Médicament',
-      dataIndex: 'medicament',
-      key: 'medicament',
+      dataIndex: 'medicamentId',
+      key: 'medicamentId',
       render: (_, record) => (
         <Form.Item
           name={['medicaments', record.key, 'medicament']}
           rules={[{ required: true, message: 'Veuillez sélectionner un médicament' }]}
         >
           <Select placeholder="Sélectionnez un médicament">
-            <Option value="medicament1">Médicament 1</Option>
-            <Option value="medicament2">Médicament 2</Option>
-            <Option value="medicament3">Médicament 3</Option>
-            {/* Ajoutez d'autres options de médicaments ici */}
+            {medicament.map((medicament) => (
+              <Option key={medicament.id} value={medicament.id}>
+                {medicament.nomMedicament}
+              </Option>
+            ))}
           </Select>
         </Form.Item>
-      )
+      ),
     },
     {
       title: 'Dose',
@@ -142,6 +162,7 @@ const FormTraitement = ({ id_consultation }) => {
 
   return (
     <div>
+      <h1>Traitement</h1>
       <Form
         form={form}
         layout="vertical"

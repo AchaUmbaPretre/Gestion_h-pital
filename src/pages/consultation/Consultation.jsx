@@ -122,17 +122,7 @@ const Consultation = () => {
             />
           </div>
           <div className="consultation-top-right">
-            <h2 className="consult-h2">Informations du client</h2>
-            <div className="consult-wrapper">
-              <div className="consult-controle">
-                <span className="consult-span">Nom <span style={{ color: 'red' }}>*</span> :</span>
-                <span className="consult-span-sous">Acha</span>
-              </div>
-              <div className="consult-controle">
-                <span className="consult-span">Prénom <span style={{ color: 'red' }}>*</span> :</span>
-                <span className="consult-span-sous">Acha</span>
-              </div>
-            </div>
+
           </div>
         </div>
         <div className="consultation-center">

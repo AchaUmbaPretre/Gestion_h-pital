@@ -22,9 +22,10 @@ import Medicament from './pages/medicament/Medicament';
 import Ordonnance from './pages/ordonnance/Ordonnance';
 import Factures from './pages/factures/Factures';
 import Paiement from './pages/paiement/Paiement';
+import { useSelector } from 'react-redux';
 
 function App() {
-  const [currentUser, setCurrentUser] = useState(true);
+  const user = useSelector((state) => state.user?.currentUser);
 
   const Layout = () => (
     <div className='app-rows'>
@@ -39,7 +40,7 @@ function App() {
   );
 
   const SecureRoute = ({ children }) => (
-    !currentUser ? <Navigate to="/login" /> : children
+    !user ? <Navigate to="/login" /> : children
   );
 
   const router = createBrowserRouter([

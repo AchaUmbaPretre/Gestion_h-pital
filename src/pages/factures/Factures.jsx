@@ -144,7 +144,7 @@ const Factures = () => {
             <Button icon={<FilterOutlined />}>Exporter</Button>
           </Dropdown>
           <Button type="primary" icon={<PlusOutlined />} onClick={showModal}>
-            Ajouter un Docteur
+            Ajouter une facture
           </Button>
         </Space>
       }
