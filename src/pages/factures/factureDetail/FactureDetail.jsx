@@ -39,11 +39,21 @@ const FactureDetail = ({ idFacture }) => {
       title: 'Type de Service',
       dataIndex: 'service_type',
       key: 'service_type',
+      render: (text) => (
+        <div>
+          { text === '' ? 'Ordonnance' : text}
+        </div>
+      )
     },
     {
       title: 'Détail',
       dataIndex: 'Type',
       key: 'Type',
+      render : (text) =>(
+        <div>
+          {text === 'Unknown Service' ? 'Ordonnance' : text}
+        </div>
+      ) 
     },
     {
       title: 'Montant',
@@ -129,7 +139,7 @@ const FactureDetail = ({ idFacture }) => {
         <Row justify="end">
           <Col span={12}>
             <Text strong>Montant Total :</Text>
-            <Title level={4}>${factureInfo.montant_total || 0}</Title>
+            <Title level={4}>{factureInfo.montant_total || 0} Fc</Title>
           </Col>
         </Row>
       </Card>

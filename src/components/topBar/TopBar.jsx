@@ -5,9 +5,16 @@ import { BellOutlined,DashOutlined } from '@ant-design/icons';
 import image from './../../assets/hopital.png';
 import users from './../../assets/user.png'
 import { useSelector } from 'react-redux';
+import { Button } from 'antd';
 const TopBar = () => {
   const user = useSelector((state) => state.user.currentUser.user);
   const navigate = useNavigate();
+
+  const LogoutButton = ({ onLogout }) => (
+    <Button type="primary" danger onClick={onLogout} style={{ width: '100%' }}>
+      Déconnexion
+    </Button>
+  );
 
   return (
     <div className="topbar">

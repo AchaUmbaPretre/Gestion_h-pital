@@ -11,34 +11,27 @@ const FactureForm = () => {
   const [form] = Form.useForm();
   const [patient, setPatient] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [serviceDetails, setServiceDetails] = useState([{ service_id: '', service_type: '', montant: 0 }]);
   const [services, setServices] = useState({
     Consultation: [],
     Médicament: [],
     Hospitalisation: [],
-    Chirurgie: [],
-    Examen: [],
+    Ordonnance: []
   });
+  const [serviceDetails, setServiceDetails] = useState([{ service_id: '', service_type: '', montant: 0 }]);
   const [totalMontant, setTotalMontant] = useState(0);
 
-  // Fonction pour récupérer les services par type
-  const fetchServicesByType = async (type) => {
-    try {
-      const response = await getFactureService(type);
-      setServices(prev => ({ ...prev, [type]: response.data }));
-    } catch (error) {
-      message.error('Erreur lors de la récupération des services.');
-    }
-  };
-
+  // Fetch patients and services
   useEffect(() => {
     const fetchData = async () => {
       try {
         const [patientResponse] = await Promise.all([
           getPatient()
         ]);
-
         setPatient(patientResponse.data);
+        // Fetch services for all types
+        for (const type of Object.keys(services)) {
+          await fetchServicesByType(type);
+        }
       } catch (error) {
         notification.error({
           message: 'Erreur de chargement',
@@ -48,11 +41,18 @@ const FactureForm = () => {
         setLoading(false);
       }
     };
-
     fetchData();
   }, []);
 
-  // Fonction appelée lors du changement de type de service
+  const fetchServicesByType = async (type) => {
+    try {
+      const response = await getFactureService(type);
+      setServices(prev => ({ ...prev, [type]: response.data }));
+    } catch (error) {
+      message.error('Erreur lors de la récupération des services.');
+    }
+  };
+
   const handleServiceTypeChange = (value, index) => {
     fetchServicesByType(value);
     setServiceDetails(prev => {
@@ -62,7 +62,6 @@ const FactureForm = () => {
     });
   };
 
-  // Fonction appelée lors du changement de service
   const handleServiceChange = (value, index) => {
     const selectedService = services[serviceDetails[index].service_type].find(service => service.id === value);
     setServiceDetails(prev => {
@@ -76,7 +75,6 @@ const FactureForm = () => {
     });
   };
 
-  // Ajouter un nouveau détail de service
   const addServiceDetail = () => {
     setServiceDetails(prev => [
       ...prev,
@@ -84,16 +82,14 @@ const FactureForm = () => {
     ]);
   };
 
-  // Supprimer un détail de service à l'index donné
   const removeServiceDetail = (index) => {
     setServiceDetails(prev => prev.filter((_, i) => i !== index));
   };
 
-  // Calculer le montant total
   useEffect(() => {
     const total = serviceDetails.reduce((total, detail) => total + detail.montant, 0);
     setTotalMontant(total);
-    form.setFieldsValue({ montant_total: total }); // Mettre à jour le champ montant_total dans le formulaire
+    form.setFieldsValue({ montant_total: total });
   }, [serviceDetails]);
 
   const onFinish = async (values) => {
@@ -105,8 +101,6 @@ const FactureForm = () => {
         service_details: serviceDetails,
       });
       message.success('Facture soumise avec succès!');
-/*       window.location.reload();
- */
     } catch (error) {
       message.error('Erreur lors de la soumission de la facture.');
     } finally {
@@ -122,7 +116,7 @@ const FactureForm = () => {
       initialValues={{
         status: 'En attente',
         date_emission: moment(),
-        montant_total: totalMontant, // Initialisation du montant_total
+        montant_total: totalMontant,
       }}
     >
       <Row gutter={16}>
@@ -132,13 +126,13 @@ const FactureForm = () => {
             name="patient_id"
             rules={[{ required: true, message: 'Veuillez entrer le patient' }]}
           >
-            <Select placeholder="Sélectionnez un patient" >
+            <Select placeholder="Sélectionnez un patient" style={{ width: '100%' }}>
               {patient.map((p) => (
                 <Option key={p.id_patient} value={p.id_patient}>
                   {p.nom_patient}
                 </Option>
               ))}
-          </Select>
+            </Select>
           </Form.Item>
         </Col>
 
@@ -189,7 +183,7 @@ const FactureForm = () => {
             name="status"
             rules={[{ required: true, message: 'Veuillez sélectionner un statut' }]}
           >
-            <Select placeholder="Sélectionner le statut">
+            <Select placeholder="Sélectionner le statut" style={{ width: '100%' }}>
               <Option value="En attente">En attente</Option>
               <Option value="Payé">Payé</Option>
               <Option value="En retard">En retard</Option>
@@ -211,12 +205,11 @@ const FactureForm = () => {
               <Select
                 placeholder="Sélectionner le type de service"
                 onChange={(value) => handleServiceTypeChange(value, index)}
+                style={{ width: '100%' }}
               >
-                <Option value="Consultation">Consultation</Option>
-                <Option value="Hospitalisation">Hospitalisation</Option>
-                <Option value="Médicament">Médicament</Option>
-                <Option value="Chirurgie">Chirurgie</Option>
-                <Option value="Examen">Examen</Option>
+                {Object.keys(services).map(type => (
+                  <Option key={type} value={type}>{type}</Option>
+                ))}
               </Select>
             </Form.Item>
           </Col>
@@ -230,30 +223,42 @@ const FactureForm = () => {
               <Select
                 placeholder="Sélectionner un service"
                 onChange={(value) => handleServiceChange(value, index)}
+                style={{ width: '100%' }}
               >
-                {services[detail.service_type] && services[detail.service_type].map((service) => (
+                {services[detail.service_type] && services[detail.service_type].map(service => (
                   <Option key={service.id} value={service.id}>
-                    {detail.service_type === 'Consultation' ? 
-                      service.description :
-                      detail.service_type === 'Médicament' ? 
-                      service.nom_medicament :
-                      service.description || 'Nom inconnu'
-                    } - {service.montant} CDF
+                    {(() => {
+                      switch (detail.service_type) {
+                        case 'Consultation':
+                          return service.description;
+                        case 'Médicament':
+                          return service.nom_medicament;
+                        case 'Ordonnance':
+                          return service.id || 'Nom inconnu';
+                        default:
+                          return 'Information non disponible';
+                      }
+                    })()} - {service.montant} CDF
                   </Option>
                 ))}
               </Select>
             </Form.Item>
           </Col>
 
-          <Col span={4}>
-            <Button type="danger" onClick={() => removeServiceDetail(index)} style={{ marginTop: '29px' }}>
+          <Col span={4} style={{ display: 'flex', alignItems: 'center' }}>
+            <Button
+              type="danger"
+              onClick={() => removeServiceDetail(index)}
+              icon="minus"
+              style={{ width: '100%' }}
+            >
               Supprimer
             </Button>
           </Col>
         </Row>
       ))}
 
-      <Button type="dashed" onClick={addServiceDetail} style={{ width: '100%', marginBottom: '20px' }}>
+      <Button type="dashed" onClick={addServiceDetail} style={{ width: '100%', marginBottom: 16 }}>
         Ajouter un service
       </Button>
 
