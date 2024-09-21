@@ -23,6 +23,7 @@ import Ordonnance from './pages/ordonnance/Ordonnance';
 import Factures from './pages/factures/Factures';
 import Paiement from './pages/paiement/Paiement';
 import { useSelector } from 'react-redux';
+import Labo from './pages/labo/Labo';
 
 function App() {
   const user = useSelector((state) => state.user?.currentUser);
@@ -98,6 +99,10 @@ function App() {
         {
           path: '/traitement',
           element: <Traitement />
+        },
+        {
+          path: '/labo',
+          element: <Labo />
         },
         {
           path: '/medicament',

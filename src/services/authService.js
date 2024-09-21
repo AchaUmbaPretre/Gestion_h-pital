@@ -11,3 +11,7 @@ export const loginUser = async (user) => {
 export const registerUser = async (user) => {
   return axios.post(`${DOMAIN}/api/auth/register`, user);
 };
+
+export const logout = async (user) => {
+  return axios.post(`${DOMAIN}/api/auth/logout`, user);
+};

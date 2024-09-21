@@ -14,6 +14,7 @@ import {
   SettingOutlined,
   DollarOutlined,
   CreditCardOutlined,
+  ExperimentOutlined
 } from '@ant-design/icons';
 import './sideBar.css'; // Assurez-vous d'importer le fichier CSS
 import { Link } from 'react-router-dom';
@@ -89,6 +90,9 @@ const SideBar = () => {
               </Link>
             </Menu.Item>
           </SubMenu>
+          <Item key="/" icon={<ExperimentOutlined />}>
+            <Link to="/labo">Laboratoire</Link>
+          </Item>
           <SubMenu key="sub5" icon={<AuditOutlined />} title="Admission">
             <Menu.Item key="11">
               <Link to='/admission'>
