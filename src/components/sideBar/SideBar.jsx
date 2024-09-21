@@ -72,25 +72,25 @@ const SideBar = () => {
             </Menu.Item>
           </SubMenu>
           <SubMenu key="sub4" icon={<AppstoreOutlined />} title="Service">
-            <Menu.Item key="9">
+            <Menu.Item key="7">
               <Link to='/liste_service'>
                 Liste des services
               </Link>
             </Menu.Item>
           </SubMenu>
           <SubMenu key="sub6" icon={<FormOutlined />} title="Consultation">
-            <Menu.Item key="13">
+            <Menu.Item key="8">
               <Link to='/consultation'>
                 Nouvelle consultation
               </Link>
             </Menu.Item>
-            <Menu.Item key="12">
+            <Menu.Item key="9">
               <Link to='/liste_consultation'>
                 Liste des consultations
               </Link>
             </Menu.Item>
           </SubMenu>
-          <Item key="/" icon={<ExperimentOutlined />}>
+          <Item key="10" icon={<ExperimentOutlined />}>
             <Link to="/labo">Laboratoire</Link>
           </Item>
           <SubMenu key="sub5" icon={<AuditOutlined />} title="Admission">
@@ -101,64 +101,64 @@ const SideBar = () => {
             </Menu.Item>
           </SubMenu>
           <SubMenu key="sub7" icon={<MedicineBoxOutlined />} title="Traitement">
-            <Menu.Item key="15">
+            <Menu.Item key="12">
               <Link to='/traitement'>
                 Traitements
               </Link>
             </Menu.Item>
           </SubMenu>
           <SubMenu key="sub8" icon={<MedicineBoxOutlined />} title="Médicament">
-            <Menu.Item key="17">
+            <Menu.Item key="13">
               <Link to='/medicament'>
                 Médicaments
               </Link>
             </Menu.Item>
           </SubMenu>
           <SubMenu key="sub9" icon={<FileTextOutlined />} title="Ordonnance">
-            <Menu.Item key="20">
+            <Menu.Item key="14">
               <Link to='/ordonnance'>
                 Liste des ordonnances
               </Link>
             </Menu.Item>
           </SubMenu>
           <SubMenu key="sub11" icon={<CalendarOutlined />} title="Rendez-vous">
-            <Menu.Item key="25">
+            <Menu.Item key="15">
               <Link to='/liste_rdv'>
                 Liste des rendez-vous
               </Link>
             </Menu.Item>
           </SubMenu>
           <SubMenu key="sub12" icon={<DollarOutlined />} title="Paiement">
-            <Menu.Item key="26">
+            <Menu.Item key="16">
               <Link to='/paiement'>
                 Paiements en attente
               </Link>
             </Menu.Item>
-            <Menu.Item key="27">
+            <Menu.Item key="17">
               <Link to='/historique_paiement'>
                 Historique des paiements
               </Link>
             </Menu.Item>
           </SubMenu>
           <SubMenu key="sub13" icon={<CreditCardOutlined />} title="Facturation">
-            <Menu.Item key="29">
+            <Menu.Item key="18">
               <Link to='/factures'>
                 Liste des factures
               </Link>
             </Menu.Item>
           </SubMenu>
           <SubMenu key="sub2" icon={<SolutionOutlined />} title="Utilisateur">
-            <Menu.Item key="4">
+            <Menu.Item key="19">
               <Link to='/liste_user'>
                 Liste des utilisateurs
               </Link>
             </Menu.Item>
           </SubMenu>
           <SubMenu key="sub10" icon={<FundOutlined />} title="Rapports">
-            <Menu.Item key="21">Rapports d'activité</Menu.Item>
-            <Menu.Item key="22">Statistiques des patients</Menu.Item>
+            <Menu.Item key="20">Rapports d'activité</Menu.Item>
+            <Menu.Item key="21">Statistiques des patients</Menu.Item>
           </SubMenu>
-          <Item key="23" icon={<SettingOutlined />}>
+          <Item key="22" icon={<SettingOutlined />}>
             Paramètres
           </Item>
         </Menu>

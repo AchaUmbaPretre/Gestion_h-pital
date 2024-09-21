@@ -8,6 +8,10 @@ export const getUser = async () => {
     return axios.get(`${DOMAIN}/api/user`);
   };
 
+export const getUserAll = async () => {
+    return axios.get(`${DOMAIN}/api/user/all`);
+  };
+
 export const postUser = async (data) => {
   return axios.post(`${DOMAIN}/api/user`, data);
 };

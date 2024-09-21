@@ -69,7 +69,7 @@ const TopBar = () => {
           <img src={users} alt="" className='user-logo'/>
           <div className="topbar-name-rows">
             <span className="topbar-name">{user.username}</span>
-            <span className="topbar-sous-name">{user.role === 1 ? 'Admin' : 'Docteur'}</span>
+            <span className="topbar-sous-name">{user.role}</span>
           </div>
         </div>
         <Popover

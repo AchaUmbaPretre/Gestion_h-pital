@@ -4,7 +4,7 @@ import moment from 'moment/moment';
 import { FileExcelOutlined, FilePdfOutlined, CalendarOutlined, MoreOutlined, FilterOutlined, PlusOutlined } from '@ant-design/icons';
 import * as XLSX from 'xlsx';
 import { getPharma } from '../../services/pharmaService';
-import { getUser } from '../../services/userService';
+import { getUser, getUserAll } from '../../services/userService';
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
@@ -19,8 +19,8 @@ const Utilisateur = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await getUser(dateFilter);
-        setDatas(response.data.data);
+        const response = await getUserAll(dateFilter);
+        setDatas(response.data);
         setLoading(false);
       } catch (error) {
         notification.error({
@@ -70,7 +70,7 @@ const Utilisateur = () => {
   };
 
   const filteredData = Array.isArray(datas) ? datas.filter(item =>
-    item.nomMedicament.toLowerCase().includes(searchTerm)
+    item.username.toLowerCase().includes(searchTerm)
   ) : [];
   
 
@@ -89,8 +89,8 @@ const Utilisateur = () => {
     { title: '#', dataIndex: 'id', key: 'id', render: (text, record, index) => index + 1 },
     {
       title: 'Nom',
-      dataIndex: 'username ',
-      key: 'username ',
+      dataIndex: 'username',
+      key: 'username',
       render: (text) => <Tag color='blue'>{text}</Tag>,
     },
     {
@@ -103,19 +103,19 @@ const Utilisateur = () => {
       title: 'Prenom',
       dataIndex: 'prenom',
       key: 'prenom',
-      render: (text) => <Tag color='blue'>{text}</Tag>,
+      render: (text) => <Tag color='blue'>{text ?? 'Aucun'}</Tag>,
     },
     {
         title: 'Role',
         dataIndex: 'role',
         key: 'role',
-        render: (text) => <Tag color='blue'>{text}</Tag>,
+        render: (text) => <Tag color='orange'>{text}</Tag>,
       },
       {
         title: 'Specialite',
         dataIndex: 'specialite',
         key: 'specialite',
-        render: (text) => <Tag color='blue'>{text}</Tag>,
+        render: (text) => <Tag color='green'>{text}</Tag>,
       },
     {
       title: 'Actions',

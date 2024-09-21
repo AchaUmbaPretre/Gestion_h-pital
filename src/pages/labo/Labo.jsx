@@ -4,6 +4,7 @@ import { FileExcelOutlined, FilePdfOutlined, CalendarOutlined, MoreOutlined, Fil
 import * as XLSX from 'xlsx';
 import { getPharma } from '../../services/pharmaService';
 import { getLabo } from '../../services/laboService';
+import LaboForm from './laboForm/LaboForm';
 
 const { RangePicker } = DatePicker;
 
@@ -154,7 +155,7 @@ const Labo = () => {
             <Button icon={<FilterOutlined />}>Exporter</Button>
           </Dropdown>
           <Button type="primary" icon={<PlusOutlined />} onClick={showModal}>
-            Ajouter un Paiement
+            Ajouter
           </Button>
         </Space>
       }
@@ -172,14 +173,14 @@ const Labo = () => {
         />
       )}
       <Modal
-        title="Labo"
+        title=""
         visible={isModalVisible}
         onOk={handleOk}
         onCancel={handleCancel}
         footer={null} 
-        width={1000}
+        width={800}
       >
-{/*         <FormPaiement /> */}
+         <LaboForm />
       </Modal>
     </Card>
   );
