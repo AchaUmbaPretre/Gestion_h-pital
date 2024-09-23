@@ -18,6 +18,7 @@ const Patient = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedType, setSelectedType] = useState('all');
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const scroll = { x: 400 };
 
 
   useEffect(() => {
@@ -162,14 +163,12 @@ const Patient = () => {
     },
     {
       title: 'Type de patient',
-      dataIndex: 'typePatient',
-      key: 'typePatient',
+      dataIndex: 'nom_typePatient',
+      key: 'nom_typePatient',
       render: (text) => (
-        <Badge
-          color={text === 'Urgent' ? 'red' : 'green'}
-          text={text}
-          icon={text === 'Urgent' ? <MedicineBoxOutlined /> : <MedicineBoxOutlined />}
-        />
+        <Tag color='blue'>
+          {text || 'Aucun'}
+        </Tag>
       ),
     },
     {
@@ -250,6 +249,7 @@ const Patient = () => {
           dataSource={filteredData}
           pagination={{ pageSize: 10 }}
           rowKey="id"
+          scroll={scroll}
         />
       )}
 

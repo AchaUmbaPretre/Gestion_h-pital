@@ -3,27 +3,28 @@ import { Form, Input, DatePicker, TimePicker, Select, Button, Row, Col, notifica
 import { postRdv } from '../../../services/rdvService';
 import { getPatient } from '../../../services/patientService';
 import { getDocteur } from '../../../services/docteurService';
+import { useSelector } from 'react-redux';
+import moment from 'moment'; // Importez moment pour gérer la date par défaut
 
 const { TextArea } = Input;
 const { Option } = Select;
 
-const FormRDV = () => {
+const FormRDV = ({onClick, fetchData}) => {
   const [form] = Form.useForm();
   const [patient, setPatient] = useState([]);
   const [docteur, setDocteur] = useState([]);
-
+  const userId = useSelector((state) => state.user.currentUser.user.id); // ID du réceptionniste
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const [patientResponse, docteurResponse] = await Promise.all([
           getPatient(),
-          getDocteur()
-          
+          getDocteur(),
         ]);
 
         setPatient(patientResponse.data);
-        setDocteur(docteurResponse.data.data)
+        setDocteur(docteurResponse.data.data);
       } catch (error) {
         notification.error({
           message: 'Erreur de chargement',
@@ -35,21 +36,35 @@ const FormRDV = () => {
     fetchData();
   }, []);
 
-  const onFinish = async(values) => {
+  const onFinish = async (values) => {
+    // Préparation des données sous forme d'objet
+    const formData = {
+      id_receptionniste: userId, // Utilisez l'ID du réceptionniste connecté
+      id_patient: values.id_patient,
+      id_docteur: values.id_docteur, // Correction : uniformisation du nom du champ
+      date_rdv: values.date_rdv.format('YYYY-MM-DD'), // Formatage de la date
+      heure_debut: values.heure_debut.format('HH:mm'), // Formatage de l'heure
+      heure_fin: values.heure_fin.format('HH:mm'), // Formatage de l'heure
+      type_rendezvous: values.type_rendezvous,
+      motif_rdv: values.motif_rdv || '', // Le motif est optionnel
+      statut: values.statut,
+    };
+
     try {
-      await postRdv(values);
+      await postRdv(formData); // Envoi sous forme d'objet JSON
       notification.success({
         message: 'Succès',
-        description: 'Les informations ont été enregistrées avec succès.',
+        description: 'Le rendez-vous a été enregistré avec succès.',
       });
-      window.location.reload();
+      form.resetFields();  // Réinitialiser le formulaire après soumission réussie
+      fetchData();
+      onClick()
     } catch (error) {
       console.error("Erreur lors de l'enregistrement:", error);
       notification.error({
         message: 'Erreur',
-        description: 'Une erreur s\'est produite lors de l\'enregistrement des informations.',
+        description: 'Une erreur s\'est produite lors de l\'enregistrement du rendez-vous.',
       });
-    } finally {
     }
   };
 
@@ -60,18 +75,22 @@ const FormRDV = () => {
         form={form}
         layout="vertical"
         onFinish={onFinish}
+        initialValues={{
+          date_rdv: moment(), // Définit la date du jour par défaut
+          statut: 'Programmé', // Définit "Programmé" comme statut par défaut
+        }}
       >
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item
               name="id_patient"
               label="Patient"
-              rules={[{ required: false, message: 'Veuillez entrer l\'ID du patient' }]}
+              rules={[{ required: true, message: 'Veuillez sélectionner un patient' }]}
             >
               <Select placeholder="Sélectionnez un patient">
-                {patient?.map((d) => (
-                  <Option key={d.id_patient} value={d.id_patient}>
-                    {d.nom_patient}
+                {patient?.map((p) => (
+                  <Option key={p.id_patient} value={p.id_patient}>
+                    {p.nom_patient}
                   </Option>
                 ))}
               </Select>
@@ -79,9 +98,9 @@ const FormRDV = () => {
           </Col>
           <Col span={12}>
             <Form.Item
-              name="id_utilisateur"
+              name="id_docteur"  // Uniformisation avec le champ utilisé dans onFinish
               label="Docteur"
-              rules={[{ required: false, message: 'Veuillez entrer l\'ID de l\'utilisateur' }]}
+              rules={[{ required: true, message: 'Veuillez sélectionner un docteur' }]}
             >
               <Select placeholder="Sélectionnez un docteur">
                 {docteur?.map((d) => (

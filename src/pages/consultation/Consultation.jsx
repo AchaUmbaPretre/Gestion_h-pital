@@ -5,6 +5,8 @@ import { getPatient } from '../../services/patientService';
 import { Button, Checkbox, Input, notification, Skeleton, Table, Tag } from 'antd';
 import { getConsultationType, postConsultation } from '../../services/consultservice';
 import { getDocteur } from '../../services/docteurService';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 const Consultation = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -14,6 +16,9 @@ const Consultation = () => {
   const [doctors, setDoctors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedConsultations, setSelectedConsultations] = useState([]);
+  const role = useSelector((state) => state.user.currentUser.user.role);
+  const userId = useSelector((state) => state.user.currentUser.user.id);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -85,15 +90,26 @@ const Consultation = () => {
     setIsLoading(true);
     try {
       for (const selected of selectedConsultations) {
-        await postConsultation({
-          ...data,
-          id_typeConsultation: selected,
-        });
+        if (role === 'DOCTEUR') {
+          await postConsultation({
+            ...data,
+            personnelId: userId,
+            id_typeConsultation: selected
+          });
+        } else {
+          await postConsultation({
+            ...data,
+            id_typeConsultation: selected,
+          });
+        }
       }
+  
       notification.success({
         message: 'Succès',
         description: 'Les informations ont été enregistrées avec succès.',
       });
+      navigate('/liste_consultation');
+  
     } catch (error) {
       console.error("Erreur lors de l'enregistrement:", error);
       notification.error({
@@ -104,6 +120,7 @@ const Consultation = () => {
       setIsLoading(false);
     }
   };
+  
 
   return (
     <div className="consultation">
@@ -149,6 +166,7 @@ const Consultation = () => {
           <div className="consultation-right">
             <h2 className="consult_h2">Informations supplémentaires</h2>
             <div className="consult-right-wrapper">
+              {(role ==! 'DOCTEUR') && (
               <div className="consult-control">
                 <label>Médecin ou docteur <span style={{ color: 'red' }}>*</span></label>
                 <Select
@@ -161,6 +179,7 @@ const Consultation = () => {
                   onChange={(selectedOption) => setData((prev) => ({ ...prev, personnelId: selectedOption.value }))}
                 />
               </div>
+              ) }
 
               <div className="consult-control">
                 <label>Diagnostic <span style={{ color: 'red' }}>*</span></label>

@@ -1,20 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { Input, Select, Skeleton,Popconfirm, Table, Tag, notification, Card, Space, Button, Badge, DatePicker, Dropdown, Menu, Modal, Tooltip } from 'antd';import moment from 'moment';
 import 'moment/locale/fr'; // Pour utiliser le format français
-import { EyeOutlined, UserOutlined,CheckOutlined,DeleteOutlined,FileExcelOutlined,FilePdfOutlined,FilterOutlined,PlusOutlined, CalendarOutlined, ClockCircleOutlined, FileTextOutlined } from '@ant-design/icons';
+import { PlusCircleOutlined, UserOutlined,CheckOutlined,DeleteOutlined,FileExcelOutlined,FilePdfOutlined,FilterOutlined,PlusOutlined, CalendarOutlined, ClockCircleOutlined, FileTextOutlined } from '@ant-design/icons';
 import * as XLSX from 'xlsx';
-import { getRdv, getRdvDocteur, putRdvConfirmation } from '../../../services/rdvService';
-import FormRdv from '../formRdv/FormRdv';
+import {  putRdvConfirmation } from '../../../services/rdvService';
 import { useSelector } from 'react-redux';
+import { getPrescriptionLabo } from '../../../services/laboService';
+import LaboForm from '../laboForm/LaboForm';
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 
-const ListeRdv = () => {
+const TransmissionLabo = () => {
   const [datas, setDatas] = useState([]);
   const [dateFilter, setDateFilter] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [idPatient, setIdPatient] = useState('')
+  const [idConsultation, setIdConsultation] = useState('')
   const [isModalVisible, setIsModalVisible] = useState(false);
   const scroll = { x: 400 };
   const role = useSelector((state) => state.user.currentUser.user.role);
@@ -23,14 +26,9 @@ const ListeRdv = () => {
 
     const fetchData = async () => {
       try {
-        if(role === 'DOCTEUR'){
-          const response = await getRdvDocteur(userId)
+          const response = await getPrescriptionLabo(userId)
           setDatas(response.data);
           setLoading(false);
-        }
-        const response = await getRdv(dateFilter);
-        setDatas(response.data);
-        setLoading(false);
       } catch (error) {
         notification.error({
           message: 'Erreur de chargement',
@@ -91,19 +89,20 @@ const ListeRdv = () => {
     setIsModalVisible(true);
   };
 
-  const handleOk = () => {
-    setIsModalVisible(false);
-  };
+
+  const handleLabo = (id_patient, id_consultation) => {
+    setIdPatient(id_patient)
+    setIdConsultation(id_consultation)
+    setIsModalVisible(true);
+  }
 
   const handleCancel = () => {
     setIsModalVisible(false);
   };
 
   const filteredData = datas?.filter(item =>
-    item.type_rendezvous.toLowerCase().includes(searchTerm)
+    item.nom_patient.toLowerCase().includes(searchTerm)
   );
-  
-  console.log(filteredData)
 
   const menu = (
     <Menu>
@@ -135,8 +134,8 @@ const ListeRdv = () => {
     },
     {
       title: 'Docteur',
-      dataIndex: 'docteur_nom',
-      key: 'docteur_nom',
+      dataIndex: 'nom_docteur',
+      key: 'nom_docteur',
       render: (text) => (
         <Tag color='green' icon={<UserOutlined />}>
           {text}
@@ -144,9 +143,29 @@ const ListeRdv = () => {
       ),
     },
     {
-      title: 'Date',
-      dataIndex: 'date_rdv',
-      key: 'date_rdv',
+        title: 'Consultation',
+        dataIndex: 'nomConsultation',
+        key: 'nomConsultation',
+        render: (text) => (
+          <Tag color='blue' icon={<FileTextOutlined />}>
+            {text}
+          </Tag>
+        ),
+      },
+    {
+        title: 'Analyse',
+        dataIndex: 'nom_analyse',
+        key: 'nom_analyse',
+        render: (text) => (
+          <Tag color='blue'>
+            {text}
+          </Tag>
+        ),
+      },
+    {
+      title: 'Date prescription',
+      dataIndex: 'date_prescription',
+      key: 'date_prescription',
       render: (text) => (
         <Tag color='blue' icon={<CalendarOutlined />}>
           {moment(text).locale('fr').format('DD MMMM YYYY')}
@@ -154,46 +173,16 @@ const ListeRdv = () => {
       ),
     },
     {
-      title: 'Heure debut',
-      dataIndex: 'heure_debut',
-      key: 'heure_debut',
-      render: (text) => (
-        <Tag color='orange' icon={<ClockCircleOutlined />}>
-          {moment(text, 'HH:mm').format('HH:mm')}
-        </Tag>
-      ),
-    },
-    {
-      title: 'Heure fin',
-      dataIndex: 'heure_fin',
-      key: 'heure_fin',
-      render: (text) => (
-        <Tag color='orange' icon={<ClockCircleOutlined />}>
-          {moment(text, 'HH:mm').format('HH:mm')}
-        </Tag>
-      ),
-    },
-    {
-      title: 'Type rendezvous',
-      dataIndex: 'type_rendezvous',
-      key: 'type_rendezvous',
-      render: (text) => (
-        <Tag color='blue' icon={<FileTextOutlined />}>
-          {text}
-        </Tag>
-      ),
-    },
-    {
       title: 'Statut',
-      dataIndex: 'statut',
-      key: 'statut',
+      dataIndex: 'status',
+      key: 'status',
       render: (text) => (
-        <Tag color='blue' icon={<FileTextOutlined />}>
+        <Tag color='green' icon={<FileTextOutlined />}>
           {text}
         </Tag>
       ),
     },
-    {
+/*     {
       title: 'Statut de confirmation',
       dataIndex: 'confirmation_docteur',
       key: 'confirmation_docteur',
@@ -202,21 +191,29 @@ const ListeRdv = () => {
           {confirmation_docteur === 'OUI' ? 'Confirmé' : 'En attente'}
         </Tag>
       ),
-    },
+    }, */
     {
       title: 'Actions',
       key: 'actions',
       render: (text, record) => (
         <Space size="middle">
-          <Tooltip title="Voir les détails">
+          <Tooltip title="Laboratoire">
+            <Button
+              icon={<PlusCircleOutlined />}
+              style={{ color: 'blue' }}
+              onClick={() => handleLabo(record.patientId, record.id_consultation)}
+              aria-label=""
+            />
+          </Tooltip>
+{/*           <Tooltip title="Voir les détails">
             <Button
               icon={<EyeOutlined />}
               style={{ color: 'blue' }}
               onClick={() => handleViewDetails(record.id)}
               aria-label="Voir les détails du client"
             />
-          </Tooltip>
-          {role === 'DOCTEUR' && record.confirmation_docteur !== 'OUI' && (
+          </Tooltip> */}
+{/*           {role === 'DOCTEUR' && record.confirmation_docteur !== 'OUI' && (
             <Tooltip title="Confirmer le rendez-vous">
               <Popconfirm
                 title="Confirmer ce rendez-vous ?"
@@ -227,11 +224,10 @@ const ListeRdv = () => {
                 <Button icon={<CheckOutlined />} style={{ color: 'green' }} />
               </Popconfirm>
             </Tooltip>
-          )}
+          )} */}
           <Tooltip title="Supprimer">
             <Popconfirm
               title="Etes-vous sûr de vouloir supprimer ce rendez-vous ?"
-              onConfirm={() => handleDelete(record.id_rdv)}
               okText="Oui"
               cancelText="Non"
             >
@@ -248,7 +244,7 @@ const ListeRdv = () => {
   return (
     <Card
       style={{padding:"20px 0px"}}
-      title="Liste des rendez vous"
+      title="Liste des prescriptions"
       extra={
         <Space size="middle">
           <RangePicker onChange={handleDateFilterChange} />
@@ -283,16 +279,15 @@ const ListeRdv = () => {
       <Modal
         title=""
         visible={isModalVisible}
-        onOk={handleOk}
         onCancel={handleCancel}
         footer={null} 
         width={700}
         centered
       >
-        <FormRdv onClick={() =>setIsModalVisible(false)} fetchData={fetchData}/>
+        <LaboForm idPatient={idPatient} idConsultation={idConsultation}/>
       </Modal>
     </Card>
   );
 };
 
-export default ListeRdv;
+export default TransmissionLabo;

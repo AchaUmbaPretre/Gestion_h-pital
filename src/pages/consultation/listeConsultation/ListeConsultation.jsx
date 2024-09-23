@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Input, Select, Skeleton, Table, Tag, notification, Card, Space, Button, Badge, DatePicker, Dropdown, Menu, Modal, Tooltip, message, Popconfirm } from 'antd';
 import moment from 'moment/moment';
-import { FileOutlined,FilterOutlined,PlusCircleOutlined,DollarOutlined,DeleteOutlined,EyeOutlined, FilePdfOutlined, UserOutlined, FileTextOutlined, CalendarOutlined, MoreOutlined } from '@ant-design/icons';
+import { FileOutlined,FilterOutlined,SendOutlined,PlusCircleOutlined,DollarOutlined,DeleteOutlined,EyeOutlined, FilePdfOutlined, UserOutlined, FileTextOutlined, CalendarOutlined, MoreOutlined } from '@ant-design/icons';
 import * as XLSX from 'xlsx';
 import { getConsultation } from '../../../services/consultservice';
 import FicheConsultation from '../ficheConsultation/FicheConsultation';
 import FormTraitement from '../../traitement/formTraitement/FormTraitement';
 import FormOrdonnance from '../../ordonnance/formOrdonnance/FormOrdonnance';
+import PrescriptionLaboratoireForm from '../../labo/prescriptionLaboratoireForm/PrescriptionLaboratoireForm';
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
@@ -19,6 +20,7 @@ const ListeConsultation = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isTraitementVisible, setIsTraitementVisible] = useState(false);
   const [isOrdonnaceVisible, setIsOrdonnanceVisible] = useState(false);
+  const [isLaboVisible, setIsLaboVisible] = useState(false);
   const [idConsult, setIdConsult] = useState('')
 
 
@@ -81,6 +83,12 @@ const ListeConsultation = () => {
     setIsTraitementVisible(true);
   };
 
+  const handleEnvoi = (id) => {
+    setIdConsult(id)
+    setIsLaboVisible(true);
+  };
+
+
   const handleViewDetails = (id) => {
     setIdConsult(id)
     setIsModalVisible(true);
@@ -94,7 +102,8 @@ const ListeConsultation = () => {
   const handleCancel = () => {
     setIsModalVisible(false);
     setIsTraitementVisible(false);
-    setIsOrdonnanceVisible(false)
+    setIsOrdonnanceVisible(false);
+    setIsLaboVisible(false)
   };
 
   const filteredData = datas?.filter(item =>
@@ -112,8 +121,6 @@ const ListeConsultation = () => {
       </Menu.Item>
     </Menu>
   );
-
-  console.log(idConsult)
 
   const columns = [
     {
@@ -157,8 +164,8 @@ const ListeConsultation = () => {
       dataIndex: 'prixConsultation',
       key: 'prixConsultation',
       render: (text) => (
-        <Tag color='blue' icon={<DollarOutlined />}>
-          {text}
+        <Tag color='blue'>
+          {text} fc
         </Tag>
       ),
     },
@@ -185,6 +192,14 @@ const ListeConsultation = () => {
               style={{ color: 'blue' }}
               onClick={() => handleViewDetails(record.id)}
               aria-label="Voir les détails du client"
+            />
+          </Tooltip>
+          <Tooltip title="Envoi le patient au labo">
+            <Button
+              icon={<SendOutlined />}
+              style={{ color: 'blue' }}
+              onClick={() => handleEnvoi(record.id)}
+              aria-label=""
             />
           </Tooltip>
           <Tooltip title="Traitement">
@@ -252,6 +267,7 @@ const ListeConsultation = () => {
           pagination={{ pageSize: 5 }}
           rowKey="id_consultation"
           size="middle"
+          bordered
         />
       )}
       <Modal
@@ -288,6 +304,18 @@ const ListeConsultation = () => {
         centered
       >
         <FormOrdonnance id_consultation={idConsult}/>
+      </Modal>
+
+      <Modal
+        title="Prescription laboratoire"
+        visible={isLaboVisible}
+        onCancel={handleCancel}
+        footer={null} 
+        width={750}
+        centered
+      >
+
+         <PrescriptionLaboratoireForm id_consultation={idConsult} onClick={()=>setIsLaboVisible(false)} />
       </Modal>
     </Card>
   );

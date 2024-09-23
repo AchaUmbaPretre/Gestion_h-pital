@@ -24,6 +24,7 @@ import Factures from './pages/factures/Factures';
 import Paiement from './pages/paiement/Paiement';
 import { useSelector } from 'react-redux';
 import Labo from './pages/labo/Labo';
+import ListePrescriptionLabo from './pages/labo/listePrescriptionLabo/ListePrescriptionLabo';
 
 function App() {
   const user = useSelector((state) => state.user?.currentUser);
@@ -99,6 +100,10 @@ function App() {
         {
           path: '/traitement',
           element: <Traitement />
+        },
+        {
+          path: '/prescription_labo',
+          element: <ListePrescriptionLabo/>
         },
         {
           path: '/labo',

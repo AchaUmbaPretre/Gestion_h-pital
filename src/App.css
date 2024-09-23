@@ -19,6 +19,8 @@
 }
 .app-outlet{
   flex: 5;
-  background: #eeeeee;
+  width: 100%;
+  overflow: hidden;
+  background: #faf9f9;
   padding: 20px;
 }

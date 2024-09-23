@@ -9,7 +9,8 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import axios from 'axios';
 import './rdv.scss';
 import ListeRdv from './listeRdv/ListeRdv';
-import { getRdv } from '../../services/rdvService';
+import { getRdv, getRdvDocteur } from '../../services/rdvService';
+import { useSelector } from 'react-redux';
 
 const { TabPane } = Tabs;
 
@@ -30,16 +31,23 @@ const Rdv = () => {
   const [datas, setDatas] = useState([]);
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
+  const role = useSelector((state) => state.user.currentUser.user.role);
+  const userId = useSelector((state) => state.user.currentUser.user.id);
+
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        if(role === 'DOCTEUR'){
+          const response = await getRdvDocteur(userId);
+          const rdvs = response.data;
+        }
         const response = await getRdv();
         const rdvs = response.data;
 
         // Transformation des données pour le calendrier
         const events = rdvs.map(rdv => ({
-          title: `${rdv.type_rendezvous} - ${rdv.nom_patient}`,
+          title: `${rdv.nom_patient}`,
           start: new Date(`${rdv.date_rdv.split('T')[0]}T${rdv.heure_debut}`),
           end: new Date(`${rdv.date_rdv.split('T')[0]}T${rdv.heure_fin}`),
         }));

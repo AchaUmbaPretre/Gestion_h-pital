@@ -1,18 +1,55 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Form, Input, Button, DatePicker, Select, Card, Row, Col, message } from 'antd';
 import { SaveOutlined } from '@ant-design/icons';
 import moment from 'moment';
+import { getPatient } from '../../../services/patientService';
+import { postLabo } from '../../../services/laboService';
+import { useNavigate } from 'react-router-dom';
 
 const { TextArea } = Input;
 const { Option } = Select;
 
-const LaboForm = () => {
+const LaboForm = ({idPatient,idConsultation}) => {
   const [form] = Form.useForm();
+  const [patient, setPatient] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  const handleFinish = (values) => {
-    // Envoyer les données au serveur ou traiter les données ici
-    console.log('Form Values:', values);
-    message.success('Analyse de laboratoire enregistrée avec succès!');
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [patientResponse] = await Promise.all([
+          getPatient()
+        ]);
+        setPatient(patientResponse.data);
+      } catch (error) {
+          console.log(error)
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+
+  const handleFinish = async(values) => {
+
+    try {
+      const formData = {
+        ...values,
+        id_consultation: idConsultation,
+        id_patient: idPatient
+      }
+      await postLabo(formData)
+      message.success('Analyse de laboratoire enregistrée avec succès!');
+      navigate('/labo')
+      window.location.reload();
+    } catch (error) {
+      message.error('Erreur lors de la soumission de la facture.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleFinishFailed = (errorInfo) => {
@@ -31,20 +68,7 @@ const LaboForm = () => {
         }}
       >
         <Row gutter={16}>
-          <Col span={12}>
-            <Form.Item
-              name="id_patient"
-              label="Patient"
-              rules={[{ required: true, message: 'Veuillez sélectionner un patient' }]}
-            >
-              <Select placeholder="Sélectionner un patient">
-                <Option value="1">Patient 1</Option>
-                <Option value="2">Patient 2</Option>
-                {/* Ajouter les options de patients dynamiquement */}
-              </Select>
-            </Form.Item>
-          </Col>
-          <Col span={12}>
+          <Col span={24}>
             <Form.Item
               name="id_type_analyse"
               label="Type d'analyse"
