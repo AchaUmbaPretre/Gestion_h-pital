@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import './topBar.scss';
 import { useNavigate } from 'react-router-dom';
-import { BellOutlined,DashOutlined } from '@ant-design/icons';
-import users from './../../assets/user.png'
+import { BellOutlined, DashOutlined } from '@ant-design/icons';
+import users from './../../assets/user.png';
 import { useSelector } from 'react-redux';
-import { Button, Divider, message, notification, Popover } from 'antd';
+import { Button, Divider, message, notification, Popover, Badge } from 'antd';
 import { logout } from '../../services/authService';
 import { getRdvDocteurConfirmation } from '../../services/rdvService';
+import { getPrescriptionLabo, getPrescriptionLaboNotif } from '../../services/laboService';
 
 const LogoutButton = ({ onLogout }) => (
   <Button type="primary" danger onClick={onLogout} style={{ width: '100%' }}>
@@ -33,29 +34,31 @@ const TopBar = () => {
       message.error('Erreur lors de la déconnexion.');
     }
   };
+  
 
   const fetchData = async () => {
     try {
-        const response = await getRdvDocteurConfirmation(userId)
+      if(role ==='DOCTEUR'){
+        const response = await getRdvDocteurConfirmation(userId);
         setData(response.data);
         setLoading(false);
-     
+      } else{
+        const response = await getPrescriptionLaboNotif();
+        setData(response.data)
+        setLoading(false);
+      }
     } catch (error) {
       notification.error({
         message: 'Erreur de chargement',
         description: 'Une erreur est survenue lors du chargement des données.',
       });
       setLoading(false);
-
     }
   };
 
-useEffect(() => {
-
-  fetchData();
-}, [userId]);
-
-console.log(data.length)
+  useEffect(() => {
+    fetchData();
+  }, [userId]);
 
   // Contenu du popover de déconnexion
   const renderLogoutContent = () => (
@@ -88,26 +91,30 @@ console.log(data.length)
         <span className="logo">Hôpital Général de Ndjili</span>
       </div>
       <div className="topbar-right">
-        <div className="topbar-icons">
-          <BellOutlined />
+        <div className="topbar-icons" style={{ position: 'relative' }}>
+          <Badge
+            count={data.length}
+          >
+            <BellOutlined style={{ fontSize: '20px' }} /> {/* Taille de l'icône */}
+          </Badge>
         </div>
         <hr />
         <div className="topbar-user-rows">
-          <img src={users} alt="" className='user-logo'/>
+          <img src={users} alt="" className="user-logo" />
           <div className="topbar-name-rows">
             <span className="topbar-name">{user.username}</span>
             <span className="topbar-sous-name">{user.role}</span>
           </div>
         </div>
         <Popover
-            content={renderLogoutContent}
-            title="Déconnexion"
-            trigger="click"
-            placement="bottomRight"
-            arrowPointAtCenter
-          >
-            <DashOutlined className="topbar-icon" aria-label="Options utilisateur" />
-          </Popover>
+          content={renderLogoutContent}
+          title="Déconnexion"
+          trigger="click"
+          placement="bottomRight"
+          arrowPointAtCenter
+        >
+          <DashOutlined className="topbar-icon" aria-label="Options utilisateur" />
+        </Popover>
       </div>
     </div>
   );

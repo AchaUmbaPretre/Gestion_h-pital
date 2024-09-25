@@ -18,6 +18,7 @@ const ListePrescriptionLabo = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [idPatient, setIdPatient] = useState('')
   const [idConsultation, setIdConsultation] = useState('')
+  const [idPrescription, setIdPrescription] = useState('')
   const [isModalVisible, setIsModalVisible] = useState(false);
   const scroll = { x: 400 };
   const role = useSelector((state) => state.user.currentUser.user.role);
@@ -90,9 +91,10 @@ const ListePrescriptionLabo = () => {
   };
 
 
-  const handleLabo = (id_patient, id_consultation) => {
+  const handleLabo = (id_patient, id_consultation, id_prescription) => {
     setIdPatient(id_patient)
     setIdConsultation(id_consultation)
+    setIdPrescription(id_prescription)
     setIsModalVisible(true);
   }
 
@@ -201,7 +203,7 @@ const ListePrescriptionLabo = () => {
             <Button
               icon={<PlusCircleOutlined />}
               style={{ color: 'blue' }}
-              onClick={() => handleLabo(record.patientId, record.id_consultation)}
+              onClick={() => handleLabo(record.patientId, record.id_consultation, record.id_prescription )}
               aria-label=""
             />
           </Tooltip>
@@ -284,7 +286,7 @@ const ListePrescriptionLabo = () => {
         width={700}
         centered
       >
-        <LaboForm idPatient={idPatient} idConsultation={idConsultation}/>
+        <LaboForm idPatient={idPatient} idConsultation={idConsultation} idPrescription={idPrescription}/>
       </Modal>
     </Card>
   );

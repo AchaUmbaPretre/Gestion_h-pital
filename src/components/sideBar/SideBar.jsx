@@ -115,7 +115,7 @@ const SideBar = () => {
               </Link>
             </Item>
           ) }
-          {(role === 'ADMINISTRATEUR') && (
+          {(role === 'ADMINISTRATEUR' || role === 'RECEPTIONNISTE') && (
             <Item key="11" icon={<AuditOutlined />}>
               <Link to='/admission'>
                 Admission

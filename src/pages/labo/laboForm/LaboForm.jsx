@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 const { TextArea } = Input;
 const { Option } = Select;
 
-const LaboForm = ({idPatient,idConsultation}) => {
+const LaboForm = ({idPatient,idConsultation,idPrescription}) => {
   const [form] = Form.useForm();
   const [patient, setPatient] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -39,7 +39,8 @@ const LaboForm = ({idPatient,idConsultation}) => {
       const formData = {
         ...values,
         id_consultation: idConsultation,
-        id_patient: idPatient
+        id_patient: idPatient,
+        id_prescription : idPrescription
       }
       await postLabo(formData)
       message.success('Analyse de laboratoire enregistrée avec succès!');

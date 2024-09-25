@@ -154,7 +154,7 @@ const ListeConsultation = () => {
       dataIndex: 'nomConsultation',
       key: 'nomConsultation',
       render: (text) => (
-        <Tag color='blue' icon={<FileTextOutlined />}>
+        <Tag color='green' icon={<FileTextOutlined />}>
           {text}
         </Tag>
       ),
@@ -164,7 +164,7 @@ const ListeConsultation = () => {
       dataIndex: 'prixConsultation',
       key: 'prixConsultation',
       render: (text) => (
-        <Tag color='blue'>
+        <Tag color='orange'>
           {text} fc
         </Tag>
       ),

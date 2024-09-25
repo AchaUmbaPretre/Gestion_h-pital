@@ -65,6 +65,7 @@ const ListeRdv = () => {
   
       // Fetch the updated data after confirmation
       fetchData();
+      window.location.reload();
     } catch (error) {
       notification.error({
         message: 'Erreur de confirmation',

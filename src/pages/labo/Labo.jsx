@@ -165,7 +165,7 @@ const Labo = () => {
       title: 'Actions',
       key: 'actions',
       render: (text, record) => (
-        <Tooltip title="Envoi le patient au labo">
+        <Tooltip title="Envoi le resultant chez le docteur">
           <Button
             icon={<SendOutlined />}
             style={{ color: 'blue' }}

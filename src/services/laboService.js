@@ -28,6 +28,10 @@ export const getPrescriptionLabo = async () => {
   return axios.get(`${DOMAIN}/api/labo/prescription`);
 };
 
+export const getPrescriptionLaboNotif = async () => {
+  return axios.get(`${DOMAIN}/api/labo/prescription/notification`);
+};
+
 export const postPrescriptionLabo = async (data) => {
 return axios.post(`${DOMAIN}/api/labo/prescription`, data);
 };

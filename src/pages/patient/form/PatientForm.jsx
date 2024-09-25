@@ -3,6 +3,7 @@ import { Form, Input, Button, Select, DatePicker, Radio, Row, Col, Modal, notifi
 import './patientForm.scss'; // Your custom SCSS for additional styling
 import { getTypePatient, postPatient } from '../../../services/patientService';
 import moment from 'moment';
+import { useNavigate } from 'react-router-dom';
 
 const { Option } = Select;
 
@@ -11,6 +12,8 @@ const PatientForm = () => {
   const [type, setType] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const navigate = useNavigate();
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -35,8 +38,10 @@ const PatientForm = () => {
         message: 'Succès',
         description: 'Les informations ont été enregistrées avec succès.',
       });
+      navigate('/liste_patient')
       form.resetFields(); // Reset form after submission
       setIsModalVisible(false);
+      window.location.reload();
     } catch (error) {
       notification.error({
         message: 'Erreur',

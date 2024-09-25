@@ -5,6 +5,7 @@ import { getPatient } from '../../../services/patientService';
 import { getDocteur } from '../../../services/docteurService';
 import { useSelector } from 'react-redux';
 import moment from 'moment'; // Importez moment pour gérer la date par défaut
+import { useNavigate } from 'react-router-dom';
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -14,7 +15,7 @@ const FormRDV = ({onClick, fetchData}) => {
   const [patient, setPatient] = useState([]);
   const [docteur, setDocteur] = useState([]);
   const userId = useSelector((state) => state.user.currentUser.user.id); // ID du réceptionniste
-
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -59,6 +60,7 @@ const FormRDV = ({onClick, fetchData}) => {
       form.resetFields();  // Réinitialiser le formulaire après soumission réussie
       fetchData();
       onClick()
+      window.location.reload();
     } catch (error) {
       console.error("Erreur lors de l'enregistrement:", error);
       notification.error({

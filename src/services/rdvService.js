@@ -13,7 +13,7 @@ export const getRdvDocteur = async (id) => {
   };
 
 export const getRdvDocteurConfirmation = async (id) => {
-    return axios.get(`${DOMAIN}/api/rendezVous/docteur_rdv/confirmation'?id=${id}`);
+    return axios.get(`${DOMAIN}/api/rendezVous/docteur_rdv/confirmation?id=${id}`);
   };
 
 export const postRdv = async (data) => {
