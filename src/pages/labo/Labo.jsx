@@ -7,6 +7,7 @@ import { getLabo, postTransmission_resultat } from '../../services/laboService';
 import LaboForm from './laboForm/LaboForm';
 import moment from 'moment';
 import { useNavigate } from 'react-router-dom';
+import TransmissionForm from './transmissionLabo/transmissionForm/TransmissionForm';
 
 const { RangePicker } = DatePicker;
 
@@ -16,6 +17,10 @@ const Labo = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isModal, setIsModal] = useState(false);
+  const [idLabo, setIdLabo] = useState('');
+  const [idDoctor, setIsDoctor] = useState('')
+
   const scroll = { x: 400 };
   const navigate = useNavigate();
 
@@ -64,12 +69,19 @@ const Labo = () => {
     setIsModalVisible(true);
   };
 
+  const showModalTrans = (idLabo, idDocteur) => {
+    setIdLabo(idLabo)
+    setIsDoctor(idDocteur)
+    setIsModal(true);
+  };
+
   const handleOk = () => {
     setIsModalVisible(false);
   };
 
   const handleCancel = () => {
     setIsModalVisible(false);
+    setIsModal(false)
   };
 
   const handleEnvoi = async(idLabo, idDocteur) => {
@@ -169,7 +181,7 @@ const Labo = () => {
           <Button
             icon={<SendOutlined />}
             style={{ color: 'blue' }}
-            onClick={() => handleEnvoi(record.id_laboratoire, record.personnelId)}
+            onClick={() => showModalTrans(record.id_laboratoire, record.personnelId)}
             aria-label=""
           />
         </Tooltip>
@@ -221,6 +233,16 @@ const Labo = () => {
         width={800}
       >
          <LaboForm />
+      </Modal>
+
+      <Modal
+        title=""
+        visible={isModal}
+        onCancel={handleCancel}
+        footer={null} 
+        width={800}
+      >
+         <TransmissionForm idLabo={idLabo} idDoctor={idDoctor}/>
       </Modal>
     </Card>
   );

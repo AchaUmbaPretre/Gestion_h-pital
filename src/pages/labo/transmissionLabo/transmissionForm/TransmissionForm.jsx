@@ -2,26 +2,24 @@ import React, { useState } from "react";
 import { Form, Input, Button, DatePicker, Select } from "antd";
 import { notification } from "antd";
 import moment from "moment";
+import { postTransmission_resultat } from "../../../../services/laboService";
 
-const doctors = [
-  { id: 1, name: "Dr. Smith" },
-  { id: 2, name: "Dr. Johnson" },
-];
 
-const laboratories = [
-  { id: 1, name: "Lab A" },
-  { id: 2, name: "Lab B" },
-];
-
-const TransmissionForm = () => {
+const TransmissionForm = ({idLabo,idDoctor}) => {
   const [form] = Form.useForm();
 
-  const onFinish = (values) => {
-    console.log("Form Submitted: ", values);
+  const onFinish = async(values) => {
+    const formData = {
+      ...values,
+      id_laboratoire : idLabo,
+      id_docteur : idDoctor
+    }
+    await postTransmission_resultat(formData);
     notification.success({
       message: "Succès",
       description: "Les données ont été soumises avec succès.",
     });
+    window.location.reload();
   };
 
   const onFinishFailed = (errorInfo) => {
